@@ -1,5 +1,5 @@
 /*
- *   Qarma - a Zenity clone for Qt4 and Qt5
+ *   Garma - a Zenity clone for Qt4 and Qt5
  *   Copyright 2014 by Thomas Lübking <thomas.luebking@gmail.com>
  *
  *   This program is free software; you can redistribute it and/or modify
@@ -16,20 +16,23 @@
  *   51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#ifndef QARMA_H
-#define QARMA_H
+#ifndef Garma_H
+#define Garma_H
 
 class QDialog;
 class QTreeWidgetItem;
 
 #include <QApplication>
+#include <dapplication.h>
 #include <QPair>
 
-class Qarma : public QApplication
+DWIDGET_USE_NAMESPACE
+
+class Garma : public DApplication
 {
     Q_OBJECT
 public:
-    Qarma(int &argc, char **argv);
+    Garma(int &argc, char **argv);
     enum Type { Invalid, Calendar, Entry, Error, Info, FileSelection, List, Notification, Progress, Question, Warning,
                 Scale, TextInfo, ColorSelection, FontSelection, Password, Forms, Dzen };
     static void printHelp(const QString &category = QString());
@@ -75,4 +78,4 @@ private:
     Type m_type;
 };
 
-#endif //QARMA_H
+#endif //Garma_H

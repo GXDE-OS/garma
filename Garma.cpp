@@ -1,5 +1,5 @@
 /*
- *   Qarma - a Zenity clone for Qt4 and Qt5
+ *   Garma - a Zenity clone for Qt4 and Qt5
  *   Copyright 2014 by Thomas Lübking <thomas.luebking@gmail.com>
  *
  *   This program is free software; you can redistribute it and/or modify
@@ -16,7 +16,7 @@
  *   51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#include "Qarma.h"
+#include "Garma.h"
 
 #include <QAction>
 #include <QBoxLayout>
@@ -55,6 +55,10 @@
 #include <QTimerEvent>
 #include <QTreeWidget>
 #include <QTreeWidgetItem>
+#include <dmainwindow.h>
+#include <ddialog.h>
+#include <DApplication>
+#include <dinputdialog.h>
 
 #if QT_VERSION >= 0x050000
 // this is to hack access to the --title parameter in Qt5
@@ -75,7 +79,7 @@
 #else
     #define SKIP_EMPTY QString::SkipEmptyParts
 #endif
-
+DWIDGET_USE_NAMESPACE
 class InputGuard : public QObject
 {
 public:
@@ -137,7 +141,7 @@ private:
             m_checkTimer = startTimer(500);
     }
     bool hasActiveFocus(QWidget *w) {
-        return w == QApplication::focusWidget() && w->isActiveWindow();
+        return w == DApplication::focusWidget() && w->isActiveWindow();
     }
     void unguard(QWidget *w) {
         Q_ASSERT(m_guardedWidget == w);
@@ -169,7 +173,7 @@ typedef QPair<QString, HelpList> CategoryHelp;
 typedef QMap<QString, CategoryHelp> HelpDict;
 
 
-Qarma::Qarma(int &argc, char **argv) : QApplication(argc, argv)
+Garma::Garma(int &argc, char **argv) : DApplication(argc, argv)
 , m_modal(false)
 , m_selectableLabel(false)
 , m_popup(false)
@@ -217,6 +221,10 @@ Qarma::Qarma(int &argc, char **argv) : QApplication(argc, argv)
         // Workaround this by setting the RESOURCE_NAME environment variable
         // which ends up being used to populate the WM_CLASS name on X11.
         qputenv("RESOURCE_NAME", m_name.toLocal8Bit());
+
+    // 创建一个不显示的 DMainWindow 以便能正常显示对话框
+    DMainWindow *window = new DMainWindow();
+    window->hide();
 
     char error = 1;
     foreach (const QString &arg, args) {
@@ -387,7 +395,7 @@ Qarma::Qarma(int &argc, char **argv) : QApplication(argc, argv)
     }
 }
 
-bool Qarma::error(const QString message)
+bool Garma::error(const QString message)
 {
     printf("Error: %s", qPrintable(message));
     QMetaObject::invokeMethod(this, "quitOnError", Qt::QueuedConnection);
@@ -422,21 +430,21 @@ static QString value(const QWidget *w, const QString &pattern)
     return QString();
 }
 
-void Qarma::dialogFinished(int status)
+void Garma::dialogFinished(int status)
 {
     if (m_type == FileSelection) {
         QFileDialog *dlg = static_cast<QFileDialog*>(sender());
         QVariantList l;
         for (int i = 0; i < dlg->sidebarUrls().count(); ++i)
             l << dlg->sidebarUrls().at(i);
-        QSettings settings("qarma");
+        QSettings settings("Garma");
         settings.setValue("Bookmarks", l);
         settings.setValue("FileDetails", dlg->viewMode() == QFileDialog::Detail);
     }
 
     if (!(status == QDialog::Accepted || status == QMessageBox::Ok || status == QMessageBox::Yes)) {
 #ifdef Q_OS_UNIX
-        if (sender()->property("qarma_autokill_parent").toBool()) {
+        if (sender()->property("Garma_autokill_parent").toBool()) {
             ::kill(getppid(), 15);
         }
 #endif
@@ -453,7 +461,7 @@ void Qarma::dialogFinished(int status)
         case Notification:
             break;
         case Calendar: {
-            QString format = sender()->property("qarma_date_format").toString();
+            QString format = sender()->property("Garma_date_format").toString();
             QDate date = sender()->findChild<QCalendarWidget*>()->selectedDate();
             if (format.isEmpty())
                 printf("%s\n", qPrintable(QLocale::system().toString(date, QLocale::ShortFormat)));
@@ -462,10 +470,10 @@ void Qarma::dialogFinished(int status)
             break;
         }
         case Entry: {
-            QInputDialog *dlg = static_cast<QInputDialog*>(sender());
-            if (dlg->inputMode() == QInputDialog::DoubleInput) {
+            DInputDialog *dlg = static_cast<DInputDialog*>(sender());
+            if (dlg->inputMode() == DInputDialog::DoubleInput) {
                 printf("%s\n", qPrintable(QLocale::c().toString(dlg->doubleValue(), 'f', 2)));
-            } else if (dlg->inputMode() == QInputDialog::IntInput) {
+            } else if (dlg->inputMode() == DInputDialog::IntInput) {
                 printf("%d\n", dlg->intValue());
             } else {
                 printf("%s\n", qPrintable(dlg->textValue()));
@@ -473,8 +481,8 @@ void Qarma::dialogFinished(int status)
             break;
         }
         case Password: {
-            QLineEdit   *username = sender()->findChild<QLineEdit*>("qarma_username"),
-                        *password = sender()->findChild<QLineEdit*>("qarma_password");
+            QLineEdit   *username = sender()->findChild<QLineEdit*>("Garma_username"),
+                        *password = sender()->findChild<QLineEdit*>("Garma_password");
             QString result;
             if (username)
                 result = username->text() + '|';
@@ -485,7 +493,7 @@ void Qarma::dialogFinished(int status)
         }
         case FileSelection: {
             QStringList files = static_cast<QFileDialog*>(sender())->selectedFiles();
-            printf("%s\n", qPrintable(files.join(sender()->property("qarma_separator").toString())));
+            printf("%s\n", qPrintable(files.join(sender()->property("Garma_separator").toString())));
             break;
         }
         case ColorSelection: {
@@ -494,7 +502,7 @@ void Qarma::dialogFinished(int status)
             QVariantList l;
             for (int i = 0; i < dlg->customCount(); ++i)
                 l << dlg->customColor(i).rgba();
-            QSettings("qarma").setValue("CustomPalette", l);
+            QSettings("Garma").setValue("CustomPalette", l);
             break;
         }
         case FontSelection: {
@@ -515,7 +523,7 @@ void Qarma::dialogFinished(int status)
             if (fnt.style() == QFont::StyleItalic) slant = "italic";
             else if (fnt.style() == QFont::StyleOblique) slant = "oblique";
 
-            QString font = sender()->property("qarma_fontpattern").toString();
+            QString font = sender()->property("Garma_fontpattern").toString();
             font = font.arg(fnt.family()).arg(size).arg(weight).arg(slant);
             printf("%s\n", qPrintable(font));
             break;
@@ -551,18 +559,18 @@ void Qarma::dialogFinished(int status)
                     }
                 }
             }
-            printf("%s\n", qPrintable(result.join(sender()->property("qarma_separator").toString())));
+            printf("%s\n", qPrintable(result.join(sender()->property("Garma_separator").toString())));
             break;
         }
         case Forms: {
             QFormLayout *fl = sender()->findChild<QFormLayout*>();
             QStringList result;
-            QString format = sender()->property("qarma_date_format").toString();
+            QString format = sender()->property("Garma_date_format").toString();
             for (int i = 0; i < fl->count(); ++i) {
                 if (QLayoutItem *li = fl->itemAt(i, QFormLayout::FieldRole))
                     result << value(li->widget(), format);
             }
-            printf("%s\n", qPrintable(result.join(sender()->property("qarma_separator").toString())));
+            printf("%s\n", qPrintable(result.join(sender()->property("Garma_separator").toString())));
             break;
         }
         default:
@@ -572,7 +580,7 @@ void Qarma::dialogFinished(int status)
     exit (0);
 }
 
-void Qarma::quitOnError()
+void Garma::quitOnError()
 {
     exit(1);
 }
@@ -582,7 +590,7 @@ void Qarma::quitOnError()
 #define SHOW_DIALOG m_dialog = dlg; connect(dlg, SIGNAL(finished(int)), SLOT(dialogFinished(int))); dlg->show();
 #define READ_INT(_V_, _TYPE_, _ERROR_) bool ok; const int _V_ = NEXT_ARG.to##_TYPE_(&ok); if (!ok) return !error(_ERROR_)
 
-bool Qarma::readGeneral(QStringList &args) {
+bool Garma::readGeneral(QStringList &args) {
     QStringList remains;
     for (int i = 0; i < args.count(); ++i) {
         if (args.at(i) == "--title") {
@@ -636,7 +644,7 @@ bool Qarma::readGeneral(QStringList &args) {
                                 connect(btns, SIGNAL(accepted()), dlg, SLOT(accept()));\
                                 connect(btns, SIGNAL(rejected()), dlg, SLOT(reject()));
 
-char Qarma::showCalendar(const QStringList &args)
+char Garma::showCalendar(const QStringList &args)
 {
     NEW_DIALOG
 
@@ -660,7 +668,7 @@ char Qarma::showCalendar(const QStringList &args)
             if (!ok)
                 return !error("--year must be followed by a positive number");
         } else if (args.at(i) == "--date-format") {
-            dlg->setProperty("qarma_date_format", NEXT_ARG);
+            dlg->setProperty("Garma_date_format", NEXT_ARG);
         } else { WARN_UNKNOWN_ARG("--calendar") }
     }
     date.setDate(y, m, d);
@@ -676,12 +684,13 @@ char Qarma::showCalendar(const QStringList &args)
     return 0;
 }
 
-char Qarma::showEntry(const QStringList &args)
+char Garma::showEntry(const QStringList &args)
 {
-    QInputDialog *dlg = new QInputDialog;
+    DInputDialog *dlg = new DInputDialog;
     for (int i = 0; i < args.count(); ++i) {
         if (args.at(i) == "--text")
-            dlg->setLabelText(labelText(NEXT_ARG));
+            qDebug() << "a";
+            //dlg->setLabelText(labelText(NEXT_ARG));
         else if (args.at(i) == "--entry-text")
             dlg->setTextValue(NEXT_ARG);
         else if (args.at(i) == "--hide-text")
@@ -690,11 +699,11 @@ char Qarma::showEntry(const QStringList &args)
             dlg->setComboBoxItems(NEXT_ARG.split('|'));
             dlg->setComboBoxEditable(true);
         } else if (args.at(i) == "--int") {
-            dlg->setInputMode(QInputDialog::IntInput);
+            dlg->setInputMode(DInputDialog::IntInput);
             dlg->setIntRange(INT_MIN, INT_MAX);
             dlg->setIntValue(NEXT_ARG.toInt());
         } else if (args.at(i) == "--float") {
-            dlg->setInputMode(QInputDialog::DoubleInput);
+            dlg->setInputMode(DInputDialog::DoubleInput);
             dlg->setDoubleRange(DBL_MIN, DBL_MAX);
             dlg->setDoubleValue(NEXT_ARG.toDouble());
         }
@@ -705,7 +714,7 @@ char Qarma::showEntry(const QStringList &args)
     return 0;
 }
 
-char Qarma::showPassword(const QStringList &args)
+char Garma::showPassword(const QStringList &args)
 {
     NEW_DIALOG
 
@@ -715,7 +724,7 @@ char Qarma::showPassword(const QStringList &args)
         if (args.at(i) == "--username") {
             vl->addWidget(new QLabel(tr("Enter username"), dlg));
             vl->addWidget(username = new QLineEdit(dlg));
-            username->setObjectName("qarma_username");
+            username->setObjectName("Garma_username");
             break;
         } else if (args.at(i) == "--prompt") {
             prompt = NEXT_ARG;
@@ -724,7 +733,7 @@ char Qarma::showPassword(const QStringList &args)
 
     vl->addWidget(new QLabel(prompt, dlg));
     vl->addWidget(password = new QLineEdit(dlg));
-    password->setObjectName("qarma_password");
+    password->setObjectName("Garma_password");
     password->setEchoMode(QLineEdit::Password);
 
     InputGuard::watch(password);
@@ -739,7 +748,7 @@ char Qarma::showPassword(const QStringList &args)
     return 0;
 }
 
-char Qarma::showMessage(const QStringList &args, char type)
+char Garma::showMessage(const QStringList &args, char type)
 {
     QMessageBox *dlg = new QMessageBox;
     dlg->setStandardButtons((type == 'q') ? QMessageBox::Yes|QMessageBox::No : QMessageBox::Ok);
@@ -779,14 +788,14 @@ char Qarma::showMessage(const QStringList &args, char type)
     return 0;
 }
 
-char Qarma::showFileSelection(const QStringList &args)
+char Garma::showFileSelection(const QStringList &args)
 {
     QFileDialog *dlg = new QFileDialog;
-    QSettings settings("qarma");
+    QSettings settings("Garma");
     dlg->setViewMode(settings.value("FileDetails", false).toBool() ? QFileDialog::Detail : QFileDialog::List);
     dlg->setFileMode(QFileDialog::ExistingFile);
     dlg->setOption(QFileDialog::DontConfirmOverwrite, false);
-    dlg->setProperty("qarma_separator", "|");
+    dlg->setProperty("Garma_separator", "|");
     QVariantList l = settings.value("Bookmarks").toList();
     QList<QUrl> bookmarks;
     for (int i = 0; i < l.count(); ++i)
@@ -812,7 +821,7 @@ char Qarma::showFileSelection(const QStringList &args)
             dlg->setAcceptMode(QFileDialog::AcceptSave);
         }
         else if (args.at(i) == "--separator")
-            dlg->setProperty("qarma_separator", NEXT_ARG);
+            dlg->setProperty("Garma_separator", NEXT_ARG);
         else if (args.at(i) == "--confirm-overwrite")
             dlg->setOption(QFileDialog::DontConfirmOverwrite);
         else if (args.at(i) == "--file-filter") {
@@ -829,7 +838,7 @@ char Qarma::showFileSelection(const QStringList &args)
     return 0;
 }
 
-void Qarma::toggleItems(QTreeWidgetItem *item, int column)
+void Garma::toggleItems(QTreeWidgetItem *item, int column)
 {
     if (column)
         return; // not the checkmark
@@ -876,7 +885,7 @@ static void addItems(QTreeWidget *tw, QStringList &values, bool editable, bool c
     }
 }
 
-char Qarma::showList(const QStringList &args)
+char Garma::showList(const QStringList &args)
 {
     NEW_DIALOG
 
@@ -894,7 +903,7 @@ char Qarma::showList(const QStringList &args)
     QStringList columns;
     QStringList values;
     QList<int> hiddenCols;
-    dlg->setProperty("qarma_separator", "|");
+    dlg->setProperty("Garma_separator", "|");
     for (int i = 0; i < args.count(); ++i) {
         if (args.at(i) == "--text")
             lbl->setText(labelText(NEXT_ARG));
@@ -907,7 +916,7 @@ char Qarma::showList(const QStringList &args)
         else if (args.at(i) == "--hide-header")
             tw->setHeaderHidden(true);
         else if (args.at(i) == "--separator")
-            dlg->setProperty("qarma_separator", NEXT_ARG);
+            dlg->setProperty("Garma_separator", NEXT_ARG);
         else if (args.at(i) == "--hide-column") {
             int v = NEXT_ARG.toInt(&ok);
             if (ok)
@@ -946,7 +955,7 @@ char Qarma::showList(const QStringList &args)
     if (checkable)
         editable = false;
 
-    tw->setProperty("qarma_list_flags", int(editable | checkable << 1 | icons << 2));
+    tw->setProperty("Garma_list_flags", int(editable | checkable << 1 | icons << 2));
 
     int columnCount = qMax(columns.count(), 1);
     tw->setColumnCount(columnCount);
@@ -967,7 +976,7 @@ char Qarma::showList(const QStringList &args)
     return 0;
 }
 
-void Qarma::notify(const QString message, bool noClose)
+void Garma::notify(const QString message, bool noClose)
 {
     if (QDBusConnection::sessionBus().interface()->isServiceRegistered("org.freedesktop.Notifications")) {
         QDBusInterface notifications("org.freedesktop.Notifications", "/org/freedesktop/Notifications", "org.freedesktop.Notifications");
@@ -976,7 +985,7 @@ void Qarma::notify(const QString message, bool noClose)
         QStringList hintList = m_notificationHints.split(':');
         for (int i = 0; i < hintList.count() - 1; i+=2)
             hintMap.insert(hintList.at(i), hintList.at(i+1));
-        QDBusMessage msg = notifications.call("Notify", "Qarma", m_notificationId, "dialog-information", summary, message,
+        QDBusMessage msg = notifications.call("Notify", "Garma", m_notificationId, "dialog-information", summary, message,
                                               QStringList() /*actions*/, hintMap, m_timeout);
         if (msg.arguments().count())
             m_notificationId = msg.arguments().at(0).toUInt();
@@ -1002,7 +1011,7 @@ void Qarma::notify(const QString message, bool noClose)
     dlg->move(QGuiApplication::screens().at(0)->availableGeometry().topRight() - QPoint(dlg->width() + 20, -20));
 }
 
-char Qarma::showNotification(const QStringList &args)
+char Garma::showNotification(const QStringList &args)
 {
     QString message;
     bool listening(false);
@@ -1027,11 +1036,11 @@ char Qarma::showNotification(const QStringList &args)
 
 static QFile *gs_stdin = 0;
 
-void Qarma::finishProgress()
+void Garma::finishProgress()
 {
     Q_ASSERT(m_type == Progress);
     QProgressDialog *dlg = static_cast<QProgressDialog*>(m_dialog);
-    if (dlg->property("qarma_autoclose").toBool())
+    if (dlg->property("Garma_autoclose").toBool())
         QTimer::singleShot(250, this, SLOT(quit()));
     else {
         dlg->setRange(0, 101);
@@ -1044,7 +1053,7 @@ void Qarma::finishProgress()
     }
 }
 
-void Qarma::readStdIn()
+void Garma::readStdIn()
 {
     if (!gs_stdin->isOpen())
         return;
@@ -1097,7 +1106,7 @@ void Qarma::readStdIn()
             disconnect (dlg, SIGNAL(canceled()), dlg, SLOT(accept()));
             connect (dlg, SIGNAL(canceled()), dlg, SLOT(reject()));
             dlg->setCancelButtonText(m_cancel.isNull() ? tr("Cancel") : m_cancel);
-        } else if (dlg->property("qarma_eta").toBool()) {
+        } else if (dlg->property("Garma_eta").toBool()) {
             static QDateTime starttime;
             if (starttime.isNull()) {
                 starttime = QDateTime::currentDateTime();
@@ -1114,12 +1123,12 @@ void Qarma::readStdIn()
             static QPropertyAnimation *animator = NULL;
             if (!animator || animator->state() != QPropertyAnimation::Running) {
                 const int oldValue = te->verticalScrollBar() ? te->verticalScrollBar()->value() : 0;
-                if (te->property("qarma_html").toBool())
+                if (te->property("Garma_html").toBool())
                     te->setHtml(te->toHtml() + cachedText);
                 else
                     te->setPlainText(te->toPlainText() + cachedText);
                 cachedText.clear();
-                if (te->verticalScrollBar() && te->property("qarma_autoscroll").toBool()) {
+                if (te->verticalScrollBar() && te->property("Garma_autoscroll").toBool()) {
                     te->verticalScrollBar()->setValue(oldValue);
                     if (!animator) {
                         animator = new QPropertyAnimation(te->verticalScrollBar(), "value", this);
@@ -1163,7 +1172,7 @@ void Qarma::readStdIn()
             qDebug() << "icon: <filename>\nmessage: <UTF-8 encoded text>\ntooltip: <UTF-8 encoded text>\nvisible: <true|false>";
     } else if (m_type == List) {
         if (QTreeWidget *tw = m_dialog->findChild<QTreeWidget*>()) {
-            const int twflags = tw->property("qarma_list_flags").toInt();
+            const int twflags = tw->property("Garma_list_flags").toInt();
             addItems(tw, input, twflags & 1, twflags & 1<<1, twflags & 1<<2);
         }
     } else if (m_type == Dzen) {
@@ -1200,7 +1209,7 @@ void Qarma::readStdIn()
     QCoreApplication::processEvents();
 }
 
-void Qarma::listenToStdIn()
+void Garma::listenToStdIn()
 {
     if (gs_stdin)
         return;
@@ -1214,7 +1223,7 @@ void Qarma::listenToStdIn()
     }
 }
 
-char Qarma::showProgress(const QStringList &args)
+char Garma::showProgress(const QStringList &args)
 {
     QProgressDialog *dlg = new QProgressDialog;
     dlg->setRange(0, 101);
@@ -1226,14 +1235,14 @@ char Qarma::showProgress(const QStringList &args)
         else if (args.at(i) == "--pulsate")
             dlg->setRange(0,0);
         else if (args.at(i) == "--auto-close")
-            dlg->setProperty("qarma_autoclose", true);
+            dlg->setProperty("Garma_autoclose", true);
         else if (args.at(i) == "--auto-kill")
-            dlg->setProperty("qarma_autokill_parent", true);
+            dlg->setProperty("Garma_autokill_parent", true);
         else if (args.at(i) == "--no-cancel") {
             if (QPushButton *btn = dlg->findChild<QPushButton*>())
                 btn->hide();
         } else if (args.at(i) == "--time-remaining") {
-            dlg->setProperty("qarma_eta", true);
+            dlg->setProperty("Garma_eta", true);
         }
         else { WARN_UNKNOWN_ARG("--progress") }
     }
@@ -1250,12 +1259,12 @@ char Qarma::showProgress(const QStringList &args)
     return 0;
 }
 
-void Qarma::printInteger(int v)
+void Garma::printInteger(int v)
 {
     printf("%d\n", v);
 }
 
-char Qarma::showScale(const QStringList &args)
+char Garma::showScale(const QStringList &args)
 {
     NEW_DIALOG
 
@@ -1302,7 +1311,7 @@ char Qarma::showScale(const QStringList &args)
     return 0;
 }
 
-char Qarma::showText(const QStringList &args)
+char Garma::showText(const QStringList &args)
 {
     NEW_DIALOG
 
@@ -1328,10 +1337,10 @@ char Qarma::showText(const QStringList &args)
         } else if (args.at(i) == "--checkbox") {
             vl->addWidget(cb = new QCheckBox(NEXT_ARG, dlg));
         } else if (args.at(i) == "--auto-scroll") {
-            te->setProperty("qarma_autoscroll", true);
+            te->setProperty("Garma_autoscroll", true);
         } else if (args.at(i) == "--html") {
             html = true;
-            te->setProperty("qarma_html", true);
+            te->setProperty("Garma_html", true);
         } else if (args.at(i) == "--plain") {
             plain = true;
         } else if (args.at(i) == "--no-interaction") {
@@ -1389,17 +1398,17 @@ char Qarma::showText(const QStringList &args)
     return 0;
 }
 
-char Qarma::showColorSelection(const QStringList &args)
+char Garma::showColorSelection(const QStringList &args)
 {
     QColorDialog *dlg = new QColorDialog;
-    QVariantList l = QSettings("qarma").value("CustomPalette").toList();
+    QVariantList l = QSettings("Garma").value("CustomPalette").toList();
     for (int i = 0; i < l.count() && i < dlg->customCount(); ++i)
         dlg->setCustomColor(i, QColor(l.at(i).toUInt()));
     for (int i = 0; i < args.count(); ++i) {
         if (args.at(i) == "--color") {
             dlg->setCurrentColor(QColor(NEXT_ARG));
         } else if (args.at(i) == "--show-palette") {
-            qWarning("The show-palette parameter is not supported by qarma. Sorry.");
+            qWarning("The show-palette parameter is not supported by Garma. Sorry.");
             void(0);
         } else if (args.at(i) == "--custom-palette") {
             if (i+1 < args.count()) {
@@ -1433,7 +1442,7 @@ char Qarma::showColorSelection(const QStringList &args)
     return 0;
 }
 
-char Qarma::showFontSelection(const QStringList &args)
+char Garma::showFontSelection(const QStringList &args)
 {
     QFontDialog *dlg = new QFontDialog;
     QString pattern = "%1-%2:%3:%4";
@@ -1461,7 +1470,7 @@ char Qarma::showFontSelection(const QStringList &args)
     }
     if (QLineEdit *smpl = dlg->findChild<QLineEdit*>("qt_fontDialog_sampleEdit"))
         smpl->setText(sample);
-    dlg->setProperty("qarma_fontpattern", pattern);
+    dlg->setProperty("Garma_fontpattern", pattern);
     SHOW_DIALOG
     return 0;
 }
@@ -1502,10 +1511,10 @@ static void buildList(QTreeWidget **tree, QStringList &values, QStringList &colu
     *tree = NULL;
 }
 
-char Qarma::showForms(const QStringList &args)
+char Garma::showForms(const QStringList &args)
 {
     NEW_DIALOG
-    dlg->setProperty("qarma_separator", "|");
+    dlg->setProperty("Garma_separator", "|");
 
     QLabel *label;
     vl->addWidget(label = new QLabel(dlg));
@@ -1552,9 +1561,9 @@ char Qarma::showForms(const QStringList &args)
         } else if (args.at(i) == "--text") {
             label->setText(labelText(NEXT_ARG));
         } else if (args.at(i) == "--separator") {
-            dlg->setProperty("qarma_separator", NEXT_ARG);
+            dlg->setProperty("Garma_separator", NEXT_ARG);
         } else if (args.at(i) == "--forms-date-format") {
-            dlg->setProperty("qarma_date_format", NEXT_ARG);
+            dlg->setProperty("Garma_date_format", NEXT_ARG);
         } else if (args.at(i) == "--add-checkbox") {
             fl->addRow(new QCheckBox(NEXT_ARG, dlg));
         } else { WARN_UNKNOWN_ARG("--forms") }
@@ -1608,7 +1617,7 @@ static QFont xftFont(const QString &pattern)
     return font;
 }
 
-char Qarma::showDzen(const QStringList &args)
+char Garma::showDzen(const QStringList &args)
 {
 //    m_popup = true;
     NEW_DIALOG
@@ -1708,7 +1717,7 @@ char Qarma::showDzen(const QStringList &args)
     return 0;
 }
 
-QString Qarma::labelText(const QString &s) const
+QString Garma::labelText(const QString &s) const
 {
     // zenity uses pango markup, https://developer.gnome.org/pygtk/stable/pango-markup-language.html
     // This near-html-subset isn't really compatible w/ Qt's html subset and we end up
@@ -1743,7 +1752,7 @@ QString Qarma::labelText(const QString &s) const
 }
 
 
-void Qarma::printHelp(const QString &category)
+void Garma::printHelp(const QString &category)
 {
     static HelpDict helpDict;
     if (helpDict.isEmpty()) {
@@ -1773,12 +1782,12 @@ void Qarma::printHelp(const QString &category)
                             Help("--window-icon=ICONPATH", tr("Set the window icon")) <<
                             Help("--width=WIDTH", tr("Set the width")) <<
                             Help("--height=HEIGHT", tr("Set the height")) <<
-                            Help("--pos=[+-]x[(+-)y]", "QARMA ONLY! " + tr("Set the position")) <<
+                            Help("--pos=[+-]x[(+-)y]", "Garma ONLY! " + tr("Set the position")) <<
                             Help("--timeout=TIMEOUT", tr("Set dialog timeout in seconds")) <<
                             Help("--ok-label=TEXT", tr("Sets the label of the Ok button")) <<
                             Help("--cancel-label=TEXT", tr("Sets the label of the Cancel button")) <<
                             Help("--modal", tr("Set the modal hint")) <<
-                            Help("--popup", "QARMA ONLY! " + tr("Open dialog as unframed and trasient popup window")) <<
+                            Help("--popup", "Garma ONLY! " + tr("Open dialog as unframed and trasient popup window")) <<
                             Help("--attach=WINDOW", tr("Set the parent window to attach to")));
         helpDict["calendar"] = CategoryHelp(tr("Calendar options"), HelpList() <<
                             Help("--text=TEXT", tr("Set the dialog text")) <<
@@ -1791,23 +1800,23 @@ void Qarma::printHelp(const QString &category)
                             Help("--text=TEXT", tr("Set the dialog text")) <<
                             Help("--entry-text=TEXT", tr("Set the entry text")) <<
                             Help("--hide-text", tr("Hide the entry text")) <<
-                            Help("--values=v1|v2|v3|...", "QARMA ONLY! " + tr("Offer preset values to pick from")) <<
-                            Help("--int=integer", "QARMA ONLY! " + tr("Integer input only, preset given value")) <<
-                            Help("--float=floating_point", "QARMA ONLY! " + tr("Floating point input only, preset given value")));
+                            Help("--values=v1|v2|v3|...", "Garma ONLY! " + tr("Offer preset values to pick from")) <<
+                            Help("--int=integer", "Garma ONLY! " + tr("Integer input only, preset given value")) <<
+                            Help("--float=floating_point", "Garma ONLY! " + tr("Floating point input only, preset given value")));
         helpDict["error"] = CategoryHelp(tr("Error options"), HelpList() <<
                             Help("--text=TEXT", tr("Set the dialog text")) <<
                             Help("--icon-name=ICON-NAME", tr("Set the dialog icon")) <<
                             Help("--no-wrap", tr("Do not enable text wrapping")) <<
                             Help("--no-markup", tr("Do not enable html markup")) <<
                             Help("--ellipsize", tr("Do wrap text, zenity has a rather special problem here")) <<
-                            Help("--selectable-labels", "QARMA ONLY! " + tr("Allow to select text for copy and paste")));
+                            Help("--selectable-labels", "Garma ONLY! " + tr("Allow to select text for copy and paste")));
         helpDict["info"] = CategoryHelp(tr("Info options"), HelpList() <<
                             Help("--text=TEXT", tr("Set the dialog text")) <<
                             Help("--icon-name=ICON-NAME", tr("Set the dialog icon")) <<
                             Help("--no-wrap", tr("Do not enable text wrapping")) <<
                             Help("--no-markup", tr("Do not enable html markup")) <<
                             Help("--ellipsize", tr("Do wrap text, zenity has a rather special problem here")) <<
-                            Help("--selectable-labels", "QARMA ONLY! " + tr("Allow to select text for copy and paste")));
+                            Help("--selectable-labels", "Garma ONLY! " + tr("Allow to select text for copy and paste")));
         helpDict["file-selection"] = CategoryHelp(tr("File selection options"), HelpList() <<
                             Help("--filename=FILENAME", tr("Set the filename")) <<
                             Help("--multiple", tr("Allow multiple files to be selected")) <<
@@ -1833,7 +1842,7 @@ void Qarma::printHelp(const QString &category)
                             Help("--text=TEXT", tr("Set the dialog text")) <<
                             Help("--listen", tr("Listen for commands on stdin")) <<
                             Help("--hint=TEXT", tr("Set the notification hints")) <<
-                            Help("--selectable-labels", "QARMA ONLY! " + tr("Allow to select text for copy and paste")));
+                            Help("--selectable-labels", "Garma ONLY! " + tr("Allow to select text for copy and paste")));
         helpDict["progress"] = CategoryHelp(tr("Progress options"), HelpList() <<
                             Help("--text=TEXT", tr("Set the dialog text")) <<
                             Help("--percentage=PERCENTAGE", tr("Set initial percentage")) <<
@@ -1848,14 +1857,14 @@ void Qarma::printHelp(const QString &category)
                             Help("--no-markup", tr("Do not enable html markup")) <<
                             Help("--default-cancel", tr("Give cancel button focus by default")) <<
                             Help("--ellipsize", tr("Do wrap text, zenity has a rather special problem here")) <<
-                            Help("--selectable-labels", "QARMA ONLY! " + tr("Allow to select text for copy and paste")));
+                            Help("--selectable-labels", "Garma ONLY! " + tr("Allow to select text for copy and paste")));
         helpDict["warning"] = CategoryHelp(tr("Warning options"), HelpList() <<
                             Help("--text=TEXT", tr("Set the dialog text")) <<
                             Help("--icon-name=ICON-NAME", tr("Set the dialog icon")) <<
                             Help("--no-wrap", tr("Do not enable text wrapping")) <<
                             Help("--no-markup", tr("Do not enable html markup")) <<
                             Help("--ellipsize", tr("Do wrap text, zenity has a rather special problem here")) <<
-                            Help("--selectable-labels", "QARMA ONLY! " + tr("Allow to select text for copy and paste")));
+                            Help("--selectable-labels", "Garma ONLY! " + tr("Allow to select text for copy and paste")));
         helpDict["scale"] = CategoryHelp(tr("Scale options"), HelpList() <<
                             Help("--text=TEXT", tr("Set the dialog text")) <<
                             Help("--value=VALUE", tr("Set initial value")) <<
@@ -1869,7 +1878,7 @@ void Qarma::printHelp(const QString &category)
                             Help("--editable", tr("Allow changes to text")) <<
                             Help("--font=TEXT", tr("Set the text font")) <<
                             Help("--checkbox=TEXT", tr("Enable an I read and agree checkbox")) <<
-                            Help("--plain", "QARMA ONLY! " + tr("Force plain text, zenity default limitation")) <<
+                            Help("--plain", "Garma ONLY! " + tr("Force plain text, zenity default limitation")) <<
                             Help("--html", tr("Enable HTML support")) <<
                             Help("--no-interaction", tr("Do not enable user interaction with the WebView. Only works if you use --html option")) <<
                             Help("--url=URL", "REQUIRES CURL BINARY! " + tr("Set an URL instead of a file. Only works if you use --html option")) <<
@@ -1877,14 +1886,14 @@ void Qarma::printHelp(const QString &category)
         helpDict["color-selection"] = CategoryHelp(tr("Color selection options"), HelpList() <<
                             Help("--color=VALUE", tr("Set the color")) <<
                             Help("--show-palette", tr("Show the palette")) <<
-                            Help("--custom-palette=path/to/some.gpl",  "QARMA ONLY! " + tr("Load a custom GPL for standard colors")));
+                            Help("--custom-palette=path/to/some.gpl",  "Garma ONLY! " + tr("Load a custom GPL for standard colors")));
         helpDict["font-selection"] = CategoryHelp(tr("Font selection options"), HelpList() <<
                             Help("--type=[vector][,bitmap][,fixed][,variable]", tr("Filter fonts (default: all)")) <<
                             Help("--pattern=%1-%2:%3:%4", tr("Output pattern, %1: Name, %2: Size, %3: weight, %4: slant")) <<
                             Help("--sample=TEXT", tr("Sample text, defaults to the foxdogthing")));
         helpDict["password"] = CategoryHelp(tr("Password dialog options"), HelpList() <<
                             Help("--username", tr("Display the username option")) <<
-                            Help("--prompt=TEXT", "QARMA ONLY! " + tr("The prompt for the user")));
+                            Help("--prompt=TEXT", "Garma ONLY! " + tr("The prompt for the user")));
         helpDict["forms"] = CategoryHelp(tr("Forms dialog options"), HelpList() <<
                             Help("--add-entry=Field name", tr("Add a new Entry in forms dialog")) <<
                             Help("--add-password=Field name", tr("Add a new Password Entry in forms dialog")) <<
@@ -1898,9 +1907,9 @@ void Qarma::printHelp(const QString &category)
                             Help("--text=TEXT", tr("Set the dialog text")) <<
                             Help("--separator=SEPARATOR", tr("Set output separator character")) <<
                             Help("--forms-date-format=PATTERN", tr("Set the format for the returned date")) <<
-                            Help("--add-checkbox=Checkbox label", "QARMA ONLY! " + tr("Add a new Checkbox forms dialog")));
+                            Help("--add-checkbox=Checkbox label", "Garma ONLY! " + tr("Add a new Checkbox forms dialog")));
         helpDict["misc"] = CategoryHelp(tr("Miscellaneous options"), HelpList() <<
-                            Help("--about", tr("About Qarma")) <<
+                            Help("--about", tr("About Garma")) <<
                             Help("--version", tr("Print version")));
         helpDict["qt"] = CategoryHelp(tr("Qt options"), HelpList() <<
                             Help("--foo", tr("Foo")) <<
@@ -1919,7 +1928,7 @@ void Qarma::printHelp(const QString &category)
                             Help("--scale", tr("Display scale dialog")) <<
                             Help("--text-info", tr("Display text information dialog")) <<
                             Help("--color-selection", tr("Display color selection dialog")) <<
-                            Help("--font-selection", "QARMA ONLY! " + tr("Display font selection dialog")) <<
+                            Help("--font-selection", "Garma ONLY! " + tr("Display font selection dialog")) <<
                             Help("--password", tr("Display password dialog")) <<
                             Help("--forms", tr("Display forms dialog")) <<
                             Help("--display=DISPLAY", tr("X display to use")) <<
@@ -1959,7 +1968,7 @@ int main (int argc, char **argv)
     if (argc > 0)
         QCoreApplication::setApplicationName(argv[0]); // autoset my ass…
     if (argc < 2) {
-        Qarma::printHelp();
+        Garma::printHelp();
         return 1;
     }
 
@@ -1968,7 +1977,7 @@ int main (int argc, char **argv)
         const QString arg(argv[i]);
         if (arg == "-h" || arg.startsWith("--help")) {
             helpMission = true;
-            Qarma::printHelp(arg.mid(7)); // "--help-"
+            Garma::printHelp(arg.mid(7)); // "--help-"
         }
     }
 
@@ -1976,6 +1985,8 @@ int main (int argc, char **argv)
         return 0;
     }
 
-    Qarma d(argc, argv);
+    DApplication::loadDXcbPlugin();
+    Garma d(argc, argv);
+
     return d.exec();
 }

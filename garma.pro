@@ -1,10 +1,13 @@
-HEADERS = Qarma.h
-SOURCES = Qarma.cpp
+HEADERS = Garma.h
+SOURCES = Garma.cpp
 QT      += dbus gui widgets
+CONFIG += link_pkgconfig
+PKGCONFIG += dtkwidget
+load(dtk_qmake)
 lessThan(QT_MAJOR_VERSION, 6){
   unix:!macx:QT += x11extras
 }
-TARGET  = qarma
+TARGET  = garma
 
 unix:!macx:LIBS    += -lX11
 unix:!macx:DEFINES += WS_X11
