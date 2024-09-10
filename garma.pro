@@ -1,5 +1,7 @@
-HEADERS = Garma.h
-SOURCES = Garma.cpp
+HEADERS = Garma.h \
+    inputguard.h
+SOURCES = Garma.cpp \
+    main.cpp
 QT      += dbus gui widgets
 CONFIG += link_pkgconfig
 PKGCONFIG += dtkwidget
