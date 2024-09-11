@@ -60,6 +60,7 @@
 #include <DApplication>
 #include <dinputdialog.h>
 #include "inputguard.h"
+#include "gmessagebox.h"
 #if QT_VERSION >= 0x050000
 // this is to hack access to the --title parameter in Qt5
 #include <QWindow>
@@ -153,6 +154,8 @@ Garma::Garma(int &argc, char **argv) : DApplication(argc, argv)
     window->hide();
 
     char error = 1;
+    /*m_type = Error;
+    error = showMessage(args, 'e');*/
     foreach (const QString &arg, args) {
         if (arg == "--calendar") {
             m_type = Calendar;
@@ -368,7 +371,7 @@ void Garma::dialogFinished(int status)
         settings.setValue("FileDetails", dlg->viewMode() == QFileDialog::Detail);
     }
 
-    if (!(status == QDialog::Accepted || status == QMessageBox::Ok || status == QMessageBox::Yes)) {
+    /*if (!(status == QDialog::Accepted || status == GMessageBox::Ok || status == GMessageBox::Yes)) {
 #ifdef Q_OS_UNIX
         if (sender()->property("Garma_autokill_parent").toBool()) {
             ::kill(getppid(), 15);
@@ -376,7 +379,7 @@ void Garma::dialogFinished(int status)
 #endif
         exit(1);
         return;
-    }
+    }*/
 
     switch (m_type) {
         case Question:
@@ -676,9 +679,17 @@ char Garma::showPassword(const QStringList &args)
 
 char Garma::showMessage(const QStringList &args, char type)
 {
-    QMessageBox *dlg = new QMessageBox;
-    dlg->setStandardButtons((type == 'q') ? QMessageBox::Yes|QMessageBox::No : QMessageBox::Ok);
-    dlg->setDefaultButton(QMessageBox::Ok);
+    GMessageBox *dlg = new GMessageBox;
+    //dlg->setStandardButtons((type == 'q') ? GMessageBox::Yes|GMessageBox::No : GMessageBox::Ok);
+    QList<GMessageBox::StandardButtons> button;
+    if (type == 'q') {
+        button << GMessageBox::Yes << GMessageBox::No;
+    }
+    else {
+        button << GMessageBox::Ok;
+    }
+    dlg->setStandardButtonsWithList(button);
+    //dlg->setDefaultButton(GMessageBox::Ok);
 
     bool wrap = true, html = true;
     for (int i = 0; i < args.count(); ++i) {
@@ -693,7 +704,8 @@ char Garma::showMessage(const QStringList &args, char type)
         else if (args.at(i) == "--no-markup")
             html = false;
         else if (args.at(i) == "--default-cancel")
-            dlg->setDefaultButton(QMessageBox::Cancel);
+            qDebug() << "a";
+            //dlg->setDefaultButton(GMessageBox::Cancel);
         else if (args.at(i) == "--selectable-labels")
             m_selectableLabel = true;
         else if (args.at(i).startsWith("--") && args.at(i) != "--info" && args.at(i) != "--question" &&
@@ -706,10 +718,13 @@ char Garma::showMessage(const QStringList &args, char type)
         if (m_selectableLabel)
             l->setTextInteractionFlags(l->textInteractionFlags()|Qt::TextSelectableByMouse);
     }
-    if (dlg->iconPixmap().isNull())
-        dlg->setIcon(type == 'w' ? QMessageBox::Warning :
-                   (type == 'q' ? QMessageBox::Question :
-                   (type == 'e' ? QMessageBox::Critical : QMessageBox::Information)));
+    dlg->setIcon(type == 'w' ? GMessageBox::Warning :
+               (type == 'q' ? GMessageBox::Question :
+               (type == 'e' ? GMessageBox::Critical : GMessageBox::Information)));
+    /*if (dlg->iconPixmap().isNull())
+        dlg->setIcon(type == 'w' ? GMessageBox::Warning :
+                   (type == 'q' ? GMessageBox::Question :
+                   (type == 'e' ? GMessageBox::Critical : GMessageBox::Information)));*/
     SHOW_DIALOG
     return 0;
 }
@@ -918,11 +933,11 @@ void Garma::notify(const QString message, bool noClose)
         return;
     }
 
-    QMessageBox *dlg = static_cast<QMessageBox*>(m_dialog);
+    GMessageBox *dlg = static_cast<GMessageBox*>(m_dialog);
     if (!dlg) {
-        dlg = new QMessageBox;
-        dlg->setIcon(QMessageBox::Information);
-        dlg->setStandardButtons(noClose ? QMessageBox::NoButton : QMessageBox::Ok);
+        dlg = new GMessageBox;
+        /*dlg->setIcon(GMessageBox::Information);
+        dlg->setStandardButtons(noClose ? GMessageBox::NoButton : GMessageBox::Ok);*/
         dlg->setWindowFlags(Qt::ToolTip);
         dlg->setWindowOpacity(0.8);
         if (QLabel *l = dlg->findChild<QLabel*>("qt_msgbox_label")) {

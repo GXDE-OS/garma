@@ -1,6 +1,8 @@
 HEADERS = Garma.h \
+    gmessagebox.h \
     inputguard.h
 SOURCES = Garma.cpp \
+    gmessagebox.cpp \
     main.cpp
 QT      += dbus gui widgets
 CONFIG += link_pkgconfig

@@ -1,0 +1,98 @@
+#include "gmessagebox.h"
+#include "dapplication.h"
+#include <QStyle>
+#include <QPixmap>
+DWIDGET_USE_NAMESPACE
+GMessageBox::GMessageBox(QWidget *parent): DDialog(parent)
+{
+
+}
+
+GMessageBox::GMessageBox(QWidget *parent,
+                         const QString &title,
+                         const QString &text): DDialog(parent)
+{
+    this->setText(text);
+    this->setTitle(title);
+}
+
+GMessageBox::Icon GMessageBox::icon() const
+{
+    return nowIcon;
+}
+
+void GMessageBox::setIcon(Icon icon)
+{
+    enum QStyle::StandardPixmap dialogIcon;
+    nowIcon = icon;
+    switch(icon)
+    {
+    case Icon::NoIcon:
+        break;
+    case Icon::Critical:
+        dialogIcon = (enum QStyle::StandardPixmap)11;
+        break;
+    case Icon::Information:
+        dialogIcon = (enum QStyle::StandardPixmap)9;
+        break;
+    case Icon::Question:
+        dialogIcon = (enum QStyle::StandardPixmap)12;
+        break;
+    case Icon::Warning:
+        dialogIcon = (enum QStyle::StandardPixmap)10;
+        break;
+    }
+    this->setIconPixmap(DApplication::style()->standardIcon(dialogIcon).pixmap(64, 64));
+}
+
+void GMessageBox::setStandardButtonsWithList(QList<StandardButtons> buttons)
+{
+    QStringList buttonsList;
+    for(StandardButtons i: buttons) {
+        switch(i) {
+        case StandardButton::Ok:
+            buttonsList << tr("OK");
+            break;
+        case StandardButton::Save:
+            buttonsList << tr("Save");
+            break;
+        case StandardButton::SaveAll:
+            buttonsList << tr("Save All");
+            break;
+        case StandardButton::Open:
+            buttonsList << tr("Open");
+            break;
+        case StandardButton::Yes:
+            buttonsList << tr("Yes");
+            break;
+        case StandardButton::YesToAll:
+            buttonsList << tr("Yes To All");
+            break;
+        case StandardButton::No:
+            buttonsList << tr("No");
+            break;
+        case StandardButton::NoToAll:
+            buttonsList << tr("No To All");
+            break;
+        case StandardButton::Abort:
+            buttonsList << tr("Abort");
+            break;
+        }
+    }
+    this->addButtons(buttonsList);
+    //this->setDefaultButton(0);
+    // 设置第一个按钮为高亮
+    this->removeButton(0);
+    this->insertButton(0, buttonsList.at(0), true, ButtonType::ButtonRecommend);
+}
+
+/*void GMessageBox::setStandardButtons(StandardButtons buttons)
+{
+
+}*/
+
+void GMessageBox::setText(const QString &text)
+{
+    this->setMessage(text);
+}
+
