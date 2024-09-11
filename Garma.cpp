@@ -683,13 +683,12 @@ char Garma::showMessage(const QStringList &args, char type)
     //dlg->setStandardButtons((type == 'q') ? GMessageBox::Yes|GMessageBox::No : GMessageBox::Ok);
     QList<GMessageBox::StandardButtons> button;
     if (type == 'q') {
-        button << GMessageBox::Yes << GMessageBox::No;
+        button << GMessageBox::No << GMessageBox::Yes;
     }
     else {
         button << GMessageBox::Ok;
     }
     dlg->setStandardButtonsWithList(button);
-    //dlg->setDefaultButton(GMessageBox::Ok);
 
     bool wrap = true, html = true;
     for (int i = 0; i < args.count(); ++i) {
