@@ -1,0 +1,17 @@
+Source: garma
+Section: unknown
+Priority: optional
+Maintainer: gfdgd_xi <3025613752@qq.com>
+Rules-Requires-Root: no
+Build-Depends:
+ debhelper-compat (= 13),
+Standards-Version: 4.6.2
+Homepage: https://gitee.com/GXDE-OS/garma
+
+Package: garma
+Architecture: any
+Depends:
+ ${shlibs:Depends},
+ ${misc:Depends},
+Description: Garma is a tool to create dialog boxes, based on Qt + dtk2. It's a clone of Zenity which was written for GTK+.
+

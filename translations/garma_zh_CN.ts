@@ -6,7 +6,7 @@
     <message>
         <location filename="../gmessagebox.cpp" line="55"/>
         <source>OK</source>
-        <translation type="unfinished"></translation>
+        <translation>确定</translation>
     </message>
     <message>
         <location filename="../gmessagebox.cpp" line="58"/>
@@ -70,17 +70,17 @@
         <location filename="../Garma.cpp" line="696"/>
         <location filename="../Garma.cpp" line="697"/>
         <source>Are you sure you want to proceed?</source>
-        <translation type="unfinished"></translation>
+        <translation>您确定要继续吗？</translation>
     </message>
     <message>
         <location filename="../Garma.cpp" line="698"/>
         <source>An error has occurred.</source>
-        <translation type="unfinished"></translation>
+        <translation>发生了错误。</translation>
     </message>
     <message>
         <location filename="../Garma.cpp" line="698"/>
         <source>All updates are complete.</source>
-        <translation type="unfinished"></translation>
+        <translation>所有更新都已完成。</translation>
     </message>
     <message>
         <location filename="../Garma.cpp" line="889"/>
