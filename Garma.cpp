@@ -570,7 +570,7 @@ bool Garma::readGeneral(QStringList &args) {
     return true;
 }
 
-#define NEW_DIALOG QDialog *dlg = new QDialog; QVBoxLayout *vl = new QVBoxLayout(dlg); if (m_popup) dlg->setWindowFlags(Qt::Popup);
+#define NEW_DIALOG DAbstractDialog *dlg = new DAbstractDialog; QVBoxLayout *vl = new QVBoxLayout(dlg); dlg->setLayout(vl); if (m_popup) dlg->setWindowFlags(Qt::Popup);
 #define FINISH_DIALOG(_BTNS_)   QDialogButtonBox *btns = new QDialogButtonBox(_BTNS_, Qt::Horizontal, dlg);\
                                 vl->addWidget(btns);\
                                 connect(btns, SIGNAL(accepted()), dlg, SLOT(accept()));\
