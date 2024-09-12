@@ -23,6 +23,10 @@ isEmpty(PREFIX) {
 
 # 翻译
 TRANSLATIONS += $$PWD/translations/garma_zh_CN.ts
+# Automating generation .qm files from .ts files
+!system($$PWD/translate_generation.sh): error("Failed to generate translation")
+translations.path = /usr/share/garma/translations/
+translations.files = translations/*.qm
 
 target.path = $$PREFIX/bin
 
