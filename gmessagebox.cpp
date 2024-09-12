@@ -28,6 +28,7 @@ void GMessageBox::setIcon(Icon icon)
     switch(icon)
     {
     case Icon::NoIcon:
+        return;
         break;
     case Icon::Critical:
         dialogIcon = (enum QStyle::StandardPixmap)11;
@@ -85,11 +86,6 @@ void GMessageBox::setStandardButtonsWithList(QList<StandardButtons> buttons)
     this->removeButton(buttonsList.length() - 1);
     this->addButton(buttonsList.at(buttonsList.length() - 1), true, ButtonType::ButtonRecommend);
 }
-
-/*void GMessageBox::setStandardButtons(StandardButtons buttons)
-{
-
-}*/
 
 void GMessageBox::setText(const QString &text)
 {

@@ -110,6 +110,9 @@ Garma::Garma(int &argc, char **argv) : DApplication(argc, argv)
 , m_dialog(NULL)
 , m_type(Invalid)
 {
+    // 加载翻译
+    this->loadTranslator();
+
     m_pos = QPoint(INT_MAX, INT_MAX); // invalid
     QStringList argList = QCoreApplication::arguments(); // arguments() is slow
     const QString binary = argList.at(0);
@@ -371,7 +374,7 @@ void Garma::dialogFinished(int status)
         settings.setValue("FileDetails", dlg->viewMode() == QFileDialog::Detail);
     }
 
-    /*if (!(status == QDialog::Accepted || status == GMessageBox::Ok || status == GMessageBox::Yes)) {
+    if (!(status == QDialog::Accepted || status == GMessageBox::Ok || status == GMessageBox::Yes)) {
 #ifdef Q_OS_UNIX
         if (sender()->property("Garma_autokill_parent").toBool()) {
             ::kill(getppid(), 15);
@@ -379,7 +382,7 @@ void Garma::dialogFinished(int status)
 #endif
         exit(1);
         return;
-    }*/
+    }
 
     switch (m_type) {
         case Question:
@@ -689,6 +692,10 @@ char Garma::showMessage(const QStringList &args, char type)
         button << GMessageBox::Ok;
     }
     dlg->setStandardButtonsWithList(button);
+    // 设置默认文本
+    dlg->setText(type == 'w' ? tr("Are you sure you want to proceed?") :
+               (type == 'q' ? tr("Are you sure you want to proceed?") :
+               (type == 'e' ? tr("An error has occurred.") : tr("All updates are complete."))));
 
     bool wrap = true, html = true;
     for (int i = 0; i < args.count(); ++i) {

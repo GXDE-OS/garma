@@ -24,6 +24,7 @@ int main (int argc, char **argv)
 
     DApplication::loadDXcbPlugin();
     Garma d(argc, argv);
+    //d.loadTranslator();
 
     return d.exec();
 }

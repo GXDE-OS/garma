@@ -21,6 +21,9 @@ isEmpty(PREFIX) {
   PREFIX = /usr
 }
 
+# 翻译
+TRANSLATIONS += $$PWD/translations/garma_zh_CN.ts
+
 target.path = $$PREFIX/bin
 
 INSTALLS += target
