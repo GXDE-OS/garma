@@ -78,6 +78,33 @@ void GMessageBox::setStandardButtonsWithList(QList<StandardButtons> buttons)
         case StandardButton::Abort:
             buttonsList << tr("Abort");
             break;
+        case StandardButton::Retry:
+            buttonsList << tr("Retry");
+            break;
+        case StandardButton::Ignore:
+            buttonsList << tr("Ignore");
+            break;
+        case StandardButton::Close:
+            buttonsList << tr("Close");
+            break;
+        case StandardButton::Cancel:
+            buttonsList << tr("Cancel");
+            break;
+        case StandardButton::Discard:
+            buttonsList << tr("Discard");
+            break;
+        case StandardButton::Help:
+            buttonsList << tr("Help");
+            break;
+        case StandardButton::Apply:
+            buttonsList << tr("Apple");
+            break;
+        case StandardButton::Reset:
+            buttonsList << tr("Reset");
+            break;
+        case StandardButton::RestoreDefaults:
+            buttonsList << tr("Restore Defaults");
+            break;
         }
     }
     this->addButtons(buttonsList);

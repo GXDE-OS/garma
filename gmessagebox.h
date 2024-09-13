@@ -39,9 +39,9 @@ public:
         Help               = 0x01000000,
         Apply              = 0x02000000,
         Reset              = 0x04000000,
-        RestoreDefaults    = 0x08000000,
+        RestoreDefaults    = 0x08000000
 
-        FirstButton        = Ok,                // internal
+        /*FirstButton        = Ok,                // internal
         LastButton         = RestoreDefaults,   // internal
 
         YesAll             = YesToAll,          // obsolete
@@ -50,7 +50,7 @@ public:
         Default            = 0x00000100,        // obsolete
         Escape             = 0x00000200,        // obsolete
         FlagMask           = 0x00000300,        // obsolete
-        ButtonMask         = ~FlagMask          // obsolete
+        ButtonMask         = ~FlagMask          // obsolete*/
     };
     typedef StandardButton Button;  // obsolete
     Q_DECLARE_FLAGS(StandardButtons, StandardButton)

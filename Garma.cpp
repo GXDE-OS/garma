@@ -61,6 +61,7 @@
 #include <dinputdialog.h>
 #include "inputguard.h"
 #include "gmessagebox.h"
+#include "gprogressdialog.h"
 #if QT_VERSION >= 0x050000
 // this is to hack access to the --title parameter in Qt5
 #include <QWindow>
@@ -1172,7 +1173,8 @@ void Garma::listenToStdIn()
 
 char Garma::showProgress(const QStringList &args)
 {
-    QProgressDialog *dlg = new QProgressDialog;
+    GProgressDialog *dlg = new GProgressDialog;
+    //QProgressDialog::value()
     dlg->setRange(0, 101);
     for (int i = 0; i < args.count(); ++i) {
         if (args.at(i) == "--text")
