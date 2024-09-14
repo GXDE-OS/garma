@@ -25,6 +25,7 @@ class QTreeWidgetItem;
 #include <QApplication>
 #include <dapplication.h>
 #include <QPair>
+#include "ddialog.h"
 
 DWIDGET_USE_NAMESPACE
 
@@ -76,6 +77,8 @@ private:
     uint m_notificationId;
     QDialog *m_dialog;
     Type m_type;
+
+    int m_listPrintColumn = -1;
 };
 
 #endif //Garma_H

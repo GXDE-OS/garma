@@ -18,6 +18,7 @@
 
 #include "Garma.h"
 
+#include <iostream>
 #include <QAction>
 #include <QBoxLayout>
 #include <QCalendarWidget>
@@ -30,7 +31,7 @@
 #include <QDBusInterface>
 #include <QDialogButtonBox>
 #include <QEvent>
-#include <QFileDialog>
+#include <DFileDialog>
 #include <QFontDialog>
 #include <QFormLayout>
 #include <QIcon>
@@ -62,6 +63,7 @@
 #include "inputguard.h"
 #include "gmessagebox.h"
 #include "gprogressdialog.h"
+#include "dfiledialog.h"
 #if QT_VERSION >= 0x050000
 // this is to hack access to the --title parameter in Qt5
 #include <QWindow>
@@ -263,6 +265,7 @@ Garma::Garma(int &argc, char **argv) : DApplication(argc, argv)
 
         if (!m_size.isNull()) {
             m_dialog->adjustSize();
+            //DDialog *dl = static_cast<DDialog*>(m_dialog);
             QSize sz = m_dialog->size();
             if (m_size.width() > 0)
                 sz.setWidth(m_size.width());
@@ -366,13 +369,13 @@ static QString value(const QWidget *w, const QString &pattern)
 void Garma::dialogFinished(int status)
 {
     if (m_type == FileSelection) {
-        QFileDialog *dlg = static_cast<QFileDialog*>(sender());
+        DFileDialog *dlg = static_cast<DFileDialog*>(sender());
         QVariantList l;
         for (int i = 0; i < dlg->sidebarUrls().count(); ++i)
             l << dlg->sidebarUrls().at(i);
         QSettings settings("Garma");
         settings.setValue("Bookmarks", l);
-        settings.setValue("FileDetails", dlg->viewMode() == QFileDialog::Detail);
+        settings.setValue("FileDetails", dlg->viewMode() == DFileDialog::Detail);
     }
 
     if (!(status == QDialog::Accepted || status == GMessageBox::Ok || status == GMessageBox::Yes)) {
@@ -425,7 +428,7 @@ void Garma::dialogFinished(int status)
             break;
         }
         case FileSelection: {
-            QStringList files = static_cast<QFileDialog*>(sender())->selectedFiles();
+            QStringList files = static_cast<DFileDialog*>(sender())->selectedFiles();
             printf("%s\n", qPrintable(files.join(sender()->property("Garma_separator").toString())));
             break;
         }
@@ -478,7 +481,7 @@ void Garma::dialogFinished(int status)
         case List: {
             QTreeWidget *tw = sender()->findChild<QTreeWidget*>();
             QStringList result;
-            if (tw) {
+            if (tw && m_listPrintColumn == -1) {
                 bool done(false);
                 foreach (const QTreeWidgetItem *twi, tw->selectedItems()) {
                     done = true;
@@ -492,7 +495,13 @@ void Garma::dialogFinished(int status)
                     }
                 }
             }
-            printf("%s\n", qPrintable(result.join(sender()->property("Garma_separator").toString())));
+            else if (tw && m_listPrintColumn >= 0) {
+                std::cout << qPrintable(tw->selectedItems().at(0)->text(m_listPrintColumn)) << std::endl;
+            }
+            if (m_listPrintColumn == -1) {
+                printf("%s\n", qPrintable(result.join(sender()->property("Garma_separator").toString())));
+            }
+
             break;
         }
         case Forms: {
@@ -745,11 +754,11 @@ char Garma::showMessage(const QStringList &args, char type)
 
 char Garma::showFileSelection(const QStringList &args)
 {
-    QFileDialog *dlg = new QFileDialog;
+    DFileDialog *dlg = new DFileDialog;
     QSettings settings("Garma");
-    dlg->setViewMode(settings.value("FileDetails", false).toBool() ? QFileDialog::Detail : QFileDialog::List);
-    dlg->setFileMode(QFileDialog::ExistingFile);
-    dlg->setOption(QFileDialog::DontConfirmOverwrite, false);
+    dlg->setViewMode(settings.value("FileDetails", false).toBool() ? DFileDialog::Detail : DFileDialog::List);
+    dlg->setFileMode(DFileDialog::ExistingFile);
+    dlg->setOption(DFileDialog::DontConfirmOverwrite, false);
     dlg->setProperty("Garma_separator", "|");
     QVariantList l = settings.value("Bookmarks").toList();
     QList<QUrl> bookmarks;
@@ -767,18 +776,18 @@ char Garma::showFileSelection(const QStringList &args)
                 dlg->selectFile(path);
         }
         else if (args.at(i) == "--multiple")
-            dlg->setFileMode(QFileDialog::ExistingFiles);
+            dlg->setFileMode(DFileDialog::ExistingFiles);
         else if (args.at(i) == "--directory") {
-            dlg->setFileMode(QFileDialog::Directory);
-            dlg->setOption(QFileDialog::ShowDirsOnly);
+            dlg->setFileMode(DFileDialog::Directory);
+            dlg->setOption(DFileDialog::ShowDirsOnly);
         } else if (args.at(i) == "--save") {
-            dlg->setFileMode(QFileDialog::AnyFile);
-            dlg->setAcceptMode(QFileDialog::AcceptSave);
+            dlg->setFileMode(DFileDialog::AnyFile);
+            dlg->setAcceptMode(DFileDialog::AcceptSave);
         }
         else if (args.at(i) == "--separator")
             dlg->setProperty("Garma_separator", NEXT_ARG);
         else if (args.at(i) == "--confirm-overwrite")
-            dlg->setOption(QFileDialog::DontConfirmOverwrite);
+            dlg->setOption(DFileDialog::DontConfirmOverwrite);
         else if (args.at(i) == "--file-filter") {
             QString mimeFilter = NEXT_ARG;
             const int idx = mimeFilter.indexOf('|');
@@ -877,7 +886,7 @@ char Garma::showList(const QStringList &args)
             if (ok)
                 hiddenCols << v-1;
         } else if (args.at(i) == "--print-column") {
-            qWarning("TODO: --print-column");
+            m_listPrintColumn = NEXT_ARG.toInt() - 1;
         } else if (args.at(i) == "--checklist") {
             tw->setSelectionMode(QAbstractItemView::NoSelection);
             tw->setAllColumnsShowFocus(false);
@@ -925,7 +934,14 @@ char Garma::showList(const QStringList &args)
     }
     for (int i = 0; i < columns.count(); ++i)
         tw->resizeColumnToContents(i);
-
+    if (!m_size.isNull()) {
+        QSize sz = tw->size();
+        if (m_size.width() > 0)
+            sz.setWidth(m_size.width());
+        if (m_size.height() > 0)
+            sz.setHeight(m_size.height());
+        tw->setFixedSize(m_size.width(), m_size.height());
+    }
     FINISH_OK_CANCEL_DIALOG
     SHOW_DIALOG
     return 0;
@@ -994,7 +1010,7 @@ static QFile *gs_stdin = 0;
 void Garma::finishProgress()
 {
     Q_ASSERT(m_type == Progress);
-    QProgressDialog *dlg = static_cast<QProgressDialog*>(m_dialog);
+    GProgressDialog *dlg = static_cast<GProgressDialog*>(m_dialog);
     if (dlg->property("Garma_autoclose").toBool())
         QTimer::singleShot(250, this, SLOT(quit()));
     else {
@@ -1040,7 +1056,7 @@ void Garma::readStdIn()
         input = newText.split('\n');
     }
     if (m_type == Progress) {
-        QProgressDialog *dlg = static_cast<QProgressDialog*>(m_dialog);
+        GProgressDialog *dlg = static_cast<GProgressDialog*>(m_dialog);
 
         const int oldValue = dlg->value();
         bool ok;
