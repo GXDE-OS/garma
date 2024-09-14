@@ -571,11 +571,18 @@ bool Garma::readGeneral(QStringList &args) {
     return true;
 }
 
-#define NEW_DIALOG DAbstractDialog *dlg = new DAbstractDialog; QVBoxLayout *vl = new QVBoxLayout(dlg); dlg->setLayout(vl); if (m_popup) dlg->setWindowFlags(Qt::Popup);
-#define FINISH_DIALOG(_BTNS_)   QDialogButtonBox *btns = new QDialogButtonBox(_BTNS_, Qt::Horizontal, dlg);\
+#define NEW_DIALOG DDialog *dlg = new DDialog; \
+    QWidget *dialogWidget = new QWidget(dlg); \
+    QVBoxLayout *vl = new QVBoxLayout(dialogWidget); \
+    dialogWidget->setLayout(vl); \
+    dlg->addContent(dialogWidget); \
+    if (m_popup) dlg->setWindowFlags(Qt::Popup);
+/*#define FINISH_DIALOG(_BTNS_)   QDialogButtonBox *btns = new QDialogButtonBox(_BTNS_, Qt::Horizontal, dlg);\
                                 vl->addWidget(btns);\
                                 connect(btns, SIGNAL(accepted()), dlg, SLOT(accept()));\
-                                connect(btns, SIGNAL(rejected()), dlg, SLOT(reject()));
+                                connect(btns, SIGNAL(rejected()), dlg, SLOT(reject()));*/
+#define FINISH_OK_CANCEL_DIALOG dlg->addButton(tr("Cancel")); \
+    dlg->addButton(tr("OK"), true, DDialog::ButtonType::ButtonRecommend);
 
 char Garma::showCalendar(const QStringList &args)
 {
@@ -611,7 +618,7 @@ char Garma::showCalendar(const QStringList &args)
     vl->addWidget(cal);
     connect(cal, SIGNAL(activated(const QDate&)), dlg, SLOT(accept()));
     if (!m_popup) {
-        FINISH_DIALOG(QDialogButtonBox::Ok|QDialogButtonBox::Cancel);
+        FINISH_OK_CANCEL_DIALOG
     }
     SHOW_DIALOG
     return 0;
@@ -676,7 +683,7 @@ char Garma::showPassword(const QStringList &args)
     else
         password->setFocus(Qt::OtherFocusReason);
 
-    FINISH_DIALOG(QDialogButtonBox::Ok|QDialogButtonBox::Cancel);
+    FINISH_OK_CANCEL_DIALOG
     SHOW_DIALOG
     return 0;
 }
@@ -919,7 +926,7 @@ char Garma::showList(const QStringList &args)
     for (int i = 0; i < columns.count(); ++i)
         tw->resizeColumnToContents(i);
 
-    FINISH_DIALOG(QDialogButtonBox::Ok|QDialogButtonBox::Cancel);
+    FINISH_OK_CANCEL_DIALOG
     SHOW_DIALOG
     return 0;
 }
@@ -1226,7 +1233,7 @@ char Garma::showScale(const QStringList &args)
     hl->addWidget(val = new QLabel(dlg));
     connect (sld, SIGNAL(valueChanged(int)), val, SLOT(setNum(int)));
 
-    FINISH_DIALOG(QDialogButtonBox::Ok|QDialogButtonBox::Cancel);
+    FINISH_OK_CANCEL_DIALOG
 
     sld->setRange(0,100);
     val->setNum(0);
@@ -1334,13 +1341,14 @@ char Garma::showText(const QStringList &args)
         }
     }
 
-    FINISH_DIALOG(QDialogButtonBox::Ok|QDialogButtonBox::Cancel);
+    FINISH_OK_CANCEL_DIALOG
 
-    if (cb) {
+    // TODO
+    /*if (cb) {
         QPushButton *btn = btns->button(QDialogButtonBox::Ok);
         btn->setEnabled(false);
         connect(cb, SIGNAL(toggled(bool)), btn, SLOT(setEnabled(bool)));
-    }
+    }*/
 
     SHOW_DIALOG
     return 0;
@@ -1519,7 +1527,7 @@ char Garma::showForms(const QStringList &args)
     buildList(&lastList, lastListValues, lastListColumns, lastListHeader);
 
 
-    FINISH_DIALOG(QDialogButtonBox::Ok|QDialogButtonBox::Cancel);
+    FINISH_OK_CANCEL_DIALOG
     SHOW_DIALOG
     return 0;
 }

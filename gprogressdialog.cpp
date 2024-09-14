@@ -26,7 +26,7 @@ GProgressDialog::GProgressDialog(QWidget *parent)
 void GProgressDialog::setLabelText(QString text)
 {
     // 设置文本居中
-    m_tipsText->setText(text);
+    m_tipsText->setText("    " + text);
 }
 
 void GProgressDialog::setValue(int value)
