@@ -116,6 +116,7 @@ void GMessageBox::setStandardButtonsWithList(QList<StandardButtons> buttons)
 
 void GMessageBox::setText(const QString &text)
 {
-    this->setMessage(text);
+    QString newText = text;
+    this->setMessage(newText.replace("\\n", "\n"));
 }
 

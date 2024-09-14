@@ -33,7 +33,7 @@ void GProgressDialog::setValue(int value)
 {
     if (m_busy) {
         // 显示繁忙动画
-        m_progressbar->setValue(100);
+        m_progressbar->setValue(50);
         m_progressbar->setTextVisible(false);
         return;
     }

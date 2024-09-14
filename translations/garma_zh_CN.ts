@@ -11,22 +11,22 @@
     <message>
         <location filename="../gmessagebox.cpp" line="58"/>
         <source>Save</source>
-        <translation type="unfinished"></translation>
+        <translation>保存</translation>
     </message>
     <message>
         <location filename="../gmessagebox.cpp" line="61"/>
         <source>Save All</source>
-        <translation type="unfinished"></translation>
+        <translation>保存全部</translation>
     </message>
     <message>
         <location filename="../gmessagebox.cpp" line="64"/>
         <source>Open</source>
-        <translation type="unfinished"></translation>
+        <translation>打开</translation>
     </message>
     <message>
         <location filename="../gmessagebox.cpp" line="67"/>
         <source>Yes</source>
-        <translation type="unfinished"></translation>
+        <translation>是</translation>
     </message>
     <message>
         <location filename="../gmessagebox.cpp" line="70"/>
@@ -36,7 +36,7 @@
     <message>
         <location filename="../gmessagebox.cpp" line="73"/>
         <source>No</source>
-        <translation type="unfinished"></translation>
+        <translation>否</translation>
     </message>
     <message>
         <location filename="../gmessagebox.cpp" line="76"/>
@@ -54,17 +54,17 @@
     <message>
         <location filename="../Garma.cpp" line="124"/>
         <source>Enter Password</source>
-        <translation type="unfinished"></translation>
+        <translation>输入密码</translation>
     </message>
     <message>
         <location filename="../Garma.cpp" line="654"/>
         <source>Enter password</source>
-        <translation type="unfinished"></translation>
+        <translation>输入密码</translation>
     </message>
     <message>
         <location filename="../Garma.cpp" line="657"/>
         <source>Enter username</source>
-        <translation type="unfinished"></translation>
+        <translation>输入用户名</translation>
     </message>
     <message>
         <location filename="../Garma.cpp" line="696"/>
@@ -95,7 +95,7 @@
     <message>
         <location filename="../Garma.cpp" line="1055"/>
         <source>Cancel</source>
-        <translation type="unfinished"></translation>
+        <translation>取消</translation>
     </message>
     <message>
         <location filename="../Garma.cpp" line="1706"/>
@@ -105,7 +105,7 @@
     <message>
         <location filename="../Garma.cpp" line="1707"/>
         <source>Show help options</source>
-        <translation type="unfinished"></translation>
+        <translation>显示帮助选项</translation>
     </message>
     <message>
         <location filename="../Garma.cpp" line="1708"/>
@@ -115,37 +115,37 @@
     <message>
         <location filename="../Garma.cpp" line="1709"/>
         <source>Show general options</source>
-        <translation type="unfinished"></translation>
+        <translation>显示常规选项</translation>
     </message>
     <message>
         <location filename="../Garma.cpp" line="1710"/>
         <source>Show calendar options</source>
-        <translation type="unfinished"></translation>
+        <translation>显示日历选项</translation>
     </message>
     <message>
         <location filename="../Garma.cpp" line="1711"/>
         <source>Show text entry options</source>
-        <translation type="unfinished"></translation>
+        <translation>显示文字输入选项</translation>
     </message>
     <message>
         <location filename="../Garma.cpp" line="1712"/>
         <source>Show error options</source>
-        <translation type="unfinished"></translation>
+        <translation>显示错误选项</translation>
     </message>
     <message>
         <location filename="../Garma.cpp" line="1713"/>
         <source>Show info options</source>
-        <translation type="unfinished"></translation>
+        <translation>显示消息选项</translation>
     </message>
     <message>
         <location filename="../Garma.cpp" line="1714"/>
         <source>Show file selection options</source>
-        <translation type="unfinished"></translation>
+        <translation>显示文件选择选项</translation>
     </message>
     <message>
         <location filename="../Garma.cpp" line="1715"/>
         <source>Show list options</source>
-        <translation type="unfinished"></translation>
+        <translation>显示列表选项</translation>
     </message>
     <message>
         <location filename="../Garma.cpp" line="1716"/>
@@ -155,12 +155,12 @@
     <message>
         <location filename="../Garma.cpp" line="1717"/>
         <source>Show progress options</source>
-        <translation type="unfinished"></translation>
+        <translation>显示进度选项</translation>
     </message>
     <message>
         <location filename="../Garma.cpp" line="1718"/>
         <source>Show question options</source>
-        <translation type="unfinished"></translation>
+        <translation>显示问题选项</translation>
     </message>
     <message>
         <location filename="../Garma.cpp" line="1719"/>
@@ -170,32 +170,32 @@
     <message>
         <location filename="../Garma.cpp" line="1720"/>
         <source>Show scale options</source>
-        <translation type="unfinished"></translation>
+        <translation>显示范围选项</translation>
     </message>
     <message>
         <location filename="../Garma.cpp" line="1721"/>
         <source>Show text information options</source>
-        <translation type="unfinished"></translation>
+        <translation>显示文本信息选项</translation>
     </message>
     <message>
         <location filename="../Garma.cpp" line="1722"/>
         <source>Show color selection options</source>
-        <translation type="unfinished"></translation>
+        <translation>显示颜色选择选项</translation>
     </message>
     <message>
         <location filename="../Garma.cpp" line="1723"/>
         <source>Show password dialog options</source>
-        <translation type="unfinished"></translation>
+        <translation>显示口令对话框选项</translation>
     </message>
     <message>
         <location filename="../Garma.cpp" line="1724"/>
         <source>Show forms dialog options</source>
-        <translation type="unfinished"></translation>
+        <translation>显示表单对话框选项</translation>
     </message>
     <message>
         <location filename="../Garma.cpp" line="1725"/>
         <source>Show miscellaneous options</source>
-        <translation type="unfinished"></translation>
+        <translation>显示杂类选项</translation>
     </message>
     <message>
         <location filename="../Garma.cpp" line="1726"/>
@@ -281,7 +281,7 @@
         <location filename="../Garma.cpp" line="1816"/>
         <location filename="../Garma.cpp" line="1854"/>
         <source>Set the dialog text</source>
-        <translation type="unfinished"></translation>
+        <translation>设置对话框文本</translation>
     </message>
     <message>
         <location filename="../Garma.cpp" line="1741"/>
@@ -345,7 +345,7 @@
         <location filename="../Garma.cpp" line="1802"/>
         <location filename="../Garma.cpp" line="1810"/>
         <source>Set the dialog icon</source>
-        <translation type="unfinished"></translation>
+        <translation>设置图标名称</translation>
     </message>
     <message>
         <location filename="../Garma.cpp" line="1756"/>
@@ -773,82 +773,82 @@ List Options</source>
     <message>
         <location filename="../Garma.cpp" line="1865"/>
         <source>Display calendar dialog</source>
-        <translation type="unfinished"></translation>
+        <translation>显示日历对话框</translation>
     </message>
     <message>
         <location filename="../Garma.cpp" line="1866"/>
         <source>Display text entry dialog</source>
-        <translation type="unfinished"></translation>
+        <translation>显示文本输入对话框</translation>
     </message>
     <message>
         <location filename="../Garma.cpp" line="1867"/>
         <source>Display error dialog</source>
-        <translation type="unfinished"></translation>
+        <translation>显示错误对话框</translation>
     </message>
     <message>
         <location filename="../Garma.cpp" line="1868"/>
         <source>Display info dialog</source>
-        <translation type="unfinished"></translation>
+        <translation>显示信息对话框</translation>
     </message>
     <message>
         <location filename="../Garma.cpp" line="1869"/>
         <source>Display file selection dialog</source>
-        <translation type="unfinished"></translation>
+        <translation>显示文件选择对话框</translation>
     </message>
     <message>
         <location filename="../Garma.cpp" line="1870"/>
         <source>Display list dialog</source>
-        <translation type="unfinished"></translation>
+        <translation>显示列表对话框</translation>
     </message>
     <message>
         <location filename="../Garma.cpp" line="1871"/>
         <source>Display notification</source>
-        <translation type="unfinished"></translation>
+        <translation>显示通知</translation>
     </message>
     <message>
         <location filename="../Garma.cpp" line="1872"/>
         <source>Display progress indication dialog</source>
-        <translation type="unfinished"></translation>
+        <translation>显示进度指示对话框</translation>
     </message>
     <message>
         <location filename="../Garma.cpp" line="1873"/>
         <source>Display question dialog</source>
-        <translation type="unfinished"></translation>
+        <translation>显示问题对话框</translation>
     </message>
     <message>
         <location filename="../Garma.cpp" line="1874"/>
         <source>Display warning dialog</source>
-        <translation type="unfinished"></translation>
+        <translation>显示警告对话框</translation>
     </message>
     <message>
         <location filename="../Garma.cpp" line="1875"/>
         <source>Display scale dialog</source>
-        <translation type="unfinished"></translation>
+        <translation>显示范围对话框</translation>
     </message>
     <message>
         <location filename="../Garma.cpp" line="1876"/>
         <source>Display text information dialog</source>
-        <translation type="unfinished"></translation>
+        <translation>显示文本信息对话框</translation>
     </message>
     <message>
         <location filename="../Garma.cpp" line="1877"/>
         <source>Display color selection dialog</source>
-        <translation type="unfinished"></translation>
+        <translation>显示颜色选择对话框</translation>
     </message>
     <message>
         <location filename="../Garma.cpp" line="1878"/>
         <source>Display font selection dialog</source>
-        <translation type="unfinished"></translation>
+        <translation>显示字体选择对话框</translation>
     </message>
     <message>
         <location filename="../Garma.cpp" line="1879"/>
         <source>Display password dialog</source>
-        <translation type="unfinished"></translation>
+        <translation>显示口令对话框</translation>
     </message>
     <message>
         <location filename="../Garma.cpp" line="1880"/>
         <source>Display forms dialog</source>
-        <translation type="unfinished"></translation>
+        <translation>显示表单对话框</translation>
     </message>
     <message>
         <location filename="../Garma.cpp" line="1881"/>
