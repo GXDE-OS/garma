@@ -107,10 +107,9 @@ void GMessageBox::setStandardButtonsWithList(QList<StandardButtons> buttons)
             break;
         }
     }
-    this->addButtons(buttonsList);
-    //this->setDefaultButton(0);
-    // 设置最后一个按钮为高亮
-    this->removeButton(buttonsList.length() - 1);
+    for(int i = 0; i < buttonsList.count() - 1; ++i) {
+        this->addButton(buttonsList.at(i));
+    }
     this->addButton(buttonsList.at(buttonsList.length() - 1), true, ButtonType::ButtonRecommend);
 }
 
