@@ -3,7 +3,7 @@
 DWIDGET_USE_NAMESPACE
 
 GProgressDialog::GProgressDialog(QWidget *parent)
-    : DAbstractDialog(parent)
+    : DDialog(parent)
 {
     m_progressbar = new DWaterProgress;
     m_tipsText = new QLabel();
@@ -12,22 +12,21 @@ GProgressDialog::GProgressDialog(QWidget *parent)
     // 开启动画
     m_progressbar->start();
 
-    connect(m_cancelButton, &QPushButton::clicked, this, [this](){
-        this->close();
-    });
+    m_layout = new QGridLayout();
+    m_layout->addWidget(m_progressbar, 0, 0);
+    m_layout->addWidget(m_tipsText, 0, 1);
 
-    m_layout = new QVBoxLayout();
-    m_layout->addWidget(m_tipsText);
-    m_layout->addWidget(m_progressbar);
-    m_layout->addWidget(m_cancelButton);
+    m_dialogWidget = new QWidget();
+    m_dialogWidget->setLayout(m_layout);
+    this->addContent(m_dialogWidget);
 
-    setLayout(m_layout);
+    addButton(tr("Cancel"), true, ButtonType::ButtonWarning);
 }
 
 void GProgressDialog::setLabelText(QString text)
 {
     // 设置文本居中
-    m_tipsText->setText("<p align='center'>" + text + "</p>");
+    m_tipsText->setText(text);
 }
 
 void GProgressDialog::setValue(int value)
@@ -40,7 +39,7 @@ void GProgressDialog::setValue(int value)
     }
     m_value = value;
     m_progressbar->setTextVisible(true);
-    m_progressbar->setValue((m_value - m_minimum) * 1.0 / (m_maximum - m_minimum));
+    m_progressbar->setValue((m_value - m_minimum) * 100 / (m_maximum - m_minimum));
 }
 
 int GProgressDialog::value()

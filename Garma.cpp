@@ -1174,8 +1174,7 @@ void Garma::listenToStdIn()
 char Garma::showProgress(const QStringList &args)
 {
     GProgressDialog *dlg = new GProgressDialog;
-    //QProgressDialog::value()
-    dlg->setRange(0, 101);
+    dlg->setRange(0, 100);
     for (int i = 0; i < args.count(); ++i) {
         if (args.at(i) == "--text")
             dlg->setLabelText(labelText(NEXT_ARG));
@@ -1221,7 +1220,7 @@ char Garma::showScale(const QStringList &args)
     QLabel *lbl, *val;
     QSlider *sld;
 
-    vl->addWidget(lbl = new QLabel("Enter a value", dlg));
+    vl->addWidget(lbl = new QLabel(tr("Enter a value"), dlg));
     vl->addLayout(hl);
     hl->addWidget(sld = new QSlider(Qt::Horizontal, dlg));
     hl->addWidget(val = new QLabel(dlg));
