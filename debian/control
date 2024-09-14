@@ -5,6 +5,10 @@ Maintainer: gfdgd_xi <3025613752@qq.com>
 Rules-Requires-Root: no
 Build-Depends:
  debhelper-compat (= 13),
+ libdtkcore2-dev, 
+ libdtkwidget2-dev,
+ qtbase5-dev,
+ qttools5-dev-tools
 Standards-Version: 4.6.2
 Homepage: https://gitee.com/GXDE-OS/garma
 
