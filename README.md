@@ -1,6 +1,6 @@
-garma
+Garma
 =====
 
-Garma is a tool to create dialog boxes, based on Qt + dtk2.
-It's a clone of Zenity which was written for GTK+.
+Garma is a tool to create dialog boxes, based on Qt + dtk2. The usage is the same as zenity
+
 
