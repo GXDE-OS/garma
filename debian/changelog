@@ -1,3 +1,10 @@
+garma (1.0.1) UNRELEASED; urgency=medium
+
+  * try to fix crash by using debug release mode 
+
+ -- gfdgd_xi <3025613752@qq.com>  Mon, 16 Sep 2024 08:01:58 +0800
+
+
 garma (1.0.0gxde1) UNRELEASED; urgency=medium
 
   * Initial release. (Closes: #nnnn)  <nnnn is the bug number of your ITP>
