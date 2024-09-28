@@ -6,9 +6,11 @@
 #include <QPushButton>
 #include <QVBoxLayout>
 #include <QGridLayout>
+#include <QKeyEvent>
 #include "dabstractdialog.h"
 #include "dwaterprogress.h"
 #include "ddialog.h"
+#include <QDebug>
 DWIDGET_BEGIN_NAMESPACE
 
 class GProgressDialog: public DDialog
@@ -23,6 +25,8 @@ public:
     void setCancelButtonText(QString text);
     void setRange(int min, int max);
 
+    void setCloseButtonVisiable(bool status);
+    bool closeButtonVisiable() const;
 
 private:
     DWaterProgress *m_progressbar;
@@ -36,8 +40,9 @@ private:
     int m_value = 0;
     bool m_busy = false;
 
+    bool m_isEnabledCloseButton = true;
 
-
+    void reject();
 };
 
 DWIDGET_END_NAMESPACE

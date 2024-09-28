@@ -1,9 +1,8 @@
-garma (1.0.1) UNRELEASED; urgency=medium
+garma (1.0.2) UNRELEASED; urgency=medium
 
-  * try to fix crash by using debug release mode 
+  * 修复问题 https://gitee.com/GXDE-OS/GXDE/issues/IAU9XH
 
- -- gfdgd_xi <3025613752@qq.com>  Mon, 16 Sep 2024 08:01:58 +0800
-
+ -- gfdgd_xi <3025613752@qq.com>  Sat, 28 Sep 2024 08:35:54 +0800
 
 garma (1.0.0gxde1) UNRELEASED; urgency=medium
 

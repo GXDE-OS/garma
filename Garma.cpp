@@ -64,6 +64,7 @@
 #include "gmessagebox.h"
 #include "gprogressdialog.h"
 #include "dfiledialog.h"
+#include "dimagebutton.h"
 #if QT_VERSION >= 0x050000
 // this is to hack access to the --title parameter in Qt5
 #include <QWindow>
@@ -1210,8 +1211,7 @@ char Garma::showProgress(const QStringList &args)
         else if (args.at(i) == "--auto-kill")
             dlg->setProperty("Garma_autokill_parent", true);
         else if (args.at(i) == "--no-cancel") {
-            if (QPushButton *btn = dlg->findChild<QPushButton*>())
-                btn->hide();
+            dlg->setCloseButtonVisiable(false);
         } else if (args.at(i) == "--time-remaining") {
             dlg->setProperty("Garma_eta", true);
         }
