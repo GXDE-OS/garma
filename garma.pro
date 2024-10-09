@@ -7,7 +7,7 @@ SOURCES = Garma.cpp \
     gprogressdialog.cpp \
     main.cpp
 QT      += dbus gui widgets
-CONFIG += link_pkgconfig debug
+CONFIG += link_pkgconfig
 PKGCONFIG += dtkwidget
 
 lessThan(QT_MAJOR_VERSION, 6){
