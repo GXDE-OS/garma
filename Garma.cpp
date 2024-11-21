@@ -1357,6 +1357,15 @@ char Garma::showText(const QStringList &args)
         }
     }
 
+    if (!m_size.isNull()) {
+        QSize sz = te->size();
+        if (m_size.width() > 0)
+            sz.setWidth(m_size.width());
+        if (m_size.height() > 0)
+            sz.setHeight(m_size.height());
+        te->setFixedSize(m_size.width(), m_size.height());
+    }
+
     FINISH_OK_CANCEL_DIALOG
 
     // TODO
