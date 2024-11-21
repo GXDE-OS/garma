@@ -1033,7 +1033,9 @@ void Garma::readStdIn()
     if (notifier)
         notifier->setEnabled(false);
 
-    QByteArray ba = m_type == TextInfo ? gs_stdin->readAll() : gs_stdin->readLine();
+    // TextInfo 与其它一样都采用逐行读取的方法以避免没必要的无响应
+    //QByteArray ba = m_type == TextInfo ? gs_stdin->readAll() : gs_stdin->readLine();
+    QByteArray ba = gs_stdin->readLine();
     if (ba.isEmpty() && notifier) {
         gs_stdin->close();
 //         gs_stdin->deleteLater(); // hello segfault...
