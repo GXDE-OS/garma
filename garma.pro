@@ -1,4 +1,5 @@
 HEADERS = Garma.h \
+    define_global.h \
     gmessagebox.h \
     gprogressdialog.h \
     inputguard.h
