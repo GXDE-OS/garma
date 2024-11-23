@@ -1,4 +1,4 @@
-garma (1.2) UNRELEASED; urgency=medium
+garma (1.2.1) UNRELEASED; urgency=medium
 
   * 修复问题 https://gitee.com/GXDE-OS/GXDE/issues/IAU9XH
   * Add dependency gxde-qt5integration
@@ -8,7 +8,7 @@ garma (1.2) UNRELEASED; urgency=medium
   * 修复 --list --checklist 的处理和返回问题
   * 补充程序翻译
 
- -- gfdgd_xi <3025613752@qq.com>  Sat, 23 Nov 2024 15:31:25 +0800
+ -- gfdgd_xi <3025613752@qq.com>  Sat, 23 Nov 2024 20:33:15 +0800
 
 garma (1.0.0gxde1) UNRELEASED; urgency=medium
 
