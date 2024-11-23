@@ -19,6 +19,7 @@
 #include "Garma.h"
 #include "define_global.h"
 
+#include <QHeaderView>
 #include <iostream>
 #include <QAction>
 #include <QBoxLayout>
@@ -96,7 +97,6 @@ typedef QPair<QString, QString> Help;
 typedef QList<Help> HelpList;
 typedef QPair<QString, HelpList> CategoryHelp;
 typedef QMap<QString, CategoryHelp> HelpDict;
-
 
 Garma::Garma(int &argc, char **argv) : DApplication(argc, argv)
 , m_modal(false)
@@ -477,20 +477,35 @@ void Garma::dialogFinished(int status)
             QStringList result;
             if (tw && m_listPrintColumn == -1) {
                 bool done(false);
-                foreach (const QTreeWidgetItem *twi, tw->selectedItems()) {
-                    done = true;
-                    result << twi->text(0);
-                }
-                if (!done) { // checkable
+                if (m_listCheckable) {
                     for (int i = 0; i < tw->topLevelItemCount(); ++i) {
                         const QTreeWidgetItem *twi = tw->topLevelItem(i);
                         if (twi->checkState(0) == Qt::Checked)
                             result << twi->text(1);
                     }
                 }
+                else {
+                    foreach (const QTreeWidgetItem *twi, tw->selectedItems()) {
+                        result << twi->text(0);
+                    }
+                }
             }
             else if (tw && m_listPrintColumn >= 0) {
-                std::cout << qPrintable(tw->selectedItems().at(0)->text(m_listPrintColumn)) << std::endl;
+                if (m_listCheckable) {
+                    for (int i = 0; i < tw->topLevelItemCount(); ++i) {
+                        const QTreeWidgetItem *twi = tw->topLevelItem(i);
+                        if (twi->checkState(0) == Qt::Checked) {
+                            // 添加空格以便正常识别
+                            std::cout << qPrintable(twi->text(m_listPrintColumn)) << " ";
+                        }
+                    }
+                }
+                else {
+                    for (auto i: tw->selectedItems()) {
+                        std::cout << qPrintable(i->text(m_listPrintColumn)) << " ";
+                    }
+                }
+                std::cout << std::endl;
             }
             if (m_listPrintColumn == -1) {
                 printf("%s\n", qPrintable(result.join(sender()->property("Garma_separator").toString())));
@@ -812,7 +827,14 @@ static void addItems(QTreeWidget *tw, QStringList &values, bool editable, bool c
             flags |= Qt::ItemIsEditable;
         if (checkable) {
             flags |= Qt::ItemIsUserCheckable;
-            item->setCheckState(0, Qt::Unchecked);
+            // 如果每一项的第一个参数为 true，则代表默认勾选
+            // 反之 false 则默认不勾选
+            // 该参数不区分大小写
+            Qt::CheckState checkState = Qt::Unchecked;
+            if (itemValues.first().toLower() == "true") {
+                checkState = Qt::Checked;
+            }
+            item->setCheckState(0, checkState);
         }
         if (icons)
             item->setIcon(0, QPixmap(item->text(0)));
@@ -838,6 +860,9 @@ char Garma::showList(const QStringList &args)
     tw->setSelectionMode(QAbstractItemView::SingleSelection);
     tw->setRootIsDecorated(false);
     tw->setAllColumnsShowFocus(true);
+
+    // 自动根据内容自适应宽度
+    tw->header()->setSectionResizeMode(QHeaderView::ResizeToContents);
 
     bool editable(false), checkable(false), exclusive(false), icons(false), ok, needFilter(true);
     QStringList columns;
@@ -894,6 +919,13 @@ char Garma::showList(const QStringList &args)
 
     if (checkable)
         editable = false;
+
+    m_listCheckable = checkable;
+
+    // 在非勾选框模式下，允许双击确认
+    if (!checkable) {
+        connect(tw, &QTreeWidget::doubleClicked, [dlg](){dlg->done(QDialog::Accepted);});
+    }
 
     tw->setProperty("Garma_list_flags", int(editable | checkable << 1 | icons << 2));
 
@@ -1008,9 +1040,8 @@ void Garma::readStdIn()
     if (notifier)
         notifier->setEnabled(false);
 
-    // TextInfo 与其它一样都采用逐行读取的方法以避免没必要的无响应
-    //QByteArray ba = m_type == TextInfo ? gs_stdin->readAll() : gs_stdin->readLine();
-    QByteArray ba = gs_stdin->readLine();
+    // List 需要一次性加载完成以正常从流读出列表
+    QByteArray ba = m_type == List ? gs_stdin->readAll() : gs_stdin->readLine();
     if (ba.isEmpty() && notifier) {
         gs_stdin->close();
 //         gs_stdin->deleteLater(); // hello segfault...

@@ -79,6 +79,7 @@ private:
     Type m_type;
 
     int m_listPrintColumn = -1;
+    bool m_listCheckable = false;
 };
 
 #endif //Garma_H
