@@ -111,6 +111,9 @@ Garma::Garma(int &argc, char **argv) : DApplication(argc, argv)
     // 加载翻译
     this->loadTranslator();
 
+    // 设置对话框默认大小
+    m_size = DialogManager::getAutoSize();
+
     m_pos = QPoint(INT_MAX, INT_MAX); // invalid
     QStringList argList = QCoreApplication::arguments(); // arguments() is slow
     const QString binary = argList.at(0);
@@ -155,7 +158,6 @@ Garma::Garma(int &argc, char **argv) : DApplication(argc, argv)
     window->hide();
 
     char error = 1;
-    m_size = DialogManager::getAutoSize();
     foreach (const QString &arg, args) {
         if (arg == "--calendar") {
             m_type = Calendar;
