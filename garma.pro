@@ -1,9 +1,11 @@
 HEADERS = Garma.h \
     define_global.h \
+    dialogmanager.h \
     gmessagebox.h \
     gprogressdialog.h \
     inputguard.h
 SOURCES = Garma.cpp \
+    dialogmanager.cpp \
     gmessagebox.cpp \
     gprogressdialog.cpp \
     main.cpp

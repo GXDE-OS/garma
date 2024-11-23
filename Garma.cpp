@@ -66,6 +66,7 @@
 #include "gprogressdialog.h"
 #include "dfiledialog.h"
 #include "dimagebutton.h"
+#include "dialogmanager.h"
 #if QT_VERSION >= 0x050000
 // this is to hack access to the --title parameter in Qt5
 #include <QWindow>
@@ -154,8 +155,7 @@ Garma::Garma(int &argc, char **argv) : DApplication(argc, argv)
     window->hide();
 
     char error = 1;
-    /*m_type = Error;
-    error = showMessage(args, 'e');*/
+    m_size = DialogManager::getAutoSize();
     foreach (const QString &arg, args) {
         if (arg == "--calendar") {
             m_type = Calendar;
