@@ -97,7 +97,7 @@ void GMessageBox::setStandardButtonsWithList(QList<StandardButtons> buttons)
             buttonsList << tr("Help");
             break;
         case StandardButton::Apply:
-            buttonsList << tr("Apple");
+            buttonsList << tr("Apply");
             break;
         case StandardButton::Reset:
             buttonsList << tr("Reset");

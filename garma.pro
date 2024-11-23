@@ -35,4 +35,4 @@ translations.files = translations/*.qm
 
 target.path = $$PREFIX/bin
 
-INSTALLS += target
+INSTALLS += target translations
