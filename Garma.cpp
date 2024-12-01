@@ -690,7 +690,7 @@ char Garma::showMessage(const QStringList &args, char type)
     GMessageBox *dlg = new GMessageBox;
     //dlg->setStandardButtons((type == 'q') ? GMessageBox::Yes|GMessageBox::No : GMessageBox::Ok);
     QList<GMessageBox::StandardButtons> button;
-    if (type == 'q' || type == 'w') {
+    if (type == 'q') {
         button << GMessageBox::No << GMessageBox::Yes;
     }
     else {
