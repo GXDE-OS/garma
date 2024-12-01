@@ -2,6 +2,8 @@
 #include "dapplication.h"
 #include <QStyle>
 #include <QPixmap>
+#include <QLabel>
+#include <QDebug>
 DWIDGET_USE_NAMESPACE
 GMessageBox::GMessageBox(QWidget *parent): DDialog(parent)
 {
@@ -115,6 +117,12 @@ void GMessageBox::setStandardButtonsWithList(QList<StandardButtons> buttons)
 
 void GMessageBox::setText(const QString &text)
 {
+    QLabel *label = findChild<QLabel*>("MessageLabel");
+    if (label) {
+        qDebug() << "Find Label";
+        label->setTextInteractionFlags(Qt::TextSelectableByMouse | Qt::TextSelectableByKeyboard);
+        label->setAttribute(Qt::WA_TransparentForMouseEvents, false);
+    }
     QString newText = text;
     this->setMessage(newText.replace("\\n", "\n"));
 }
