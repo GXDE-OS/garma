@@ -372,7 +372,8 @@ void Garma::dialogFinished(int status)
     if (!(status == QDialog::Accepted || status == GMessageBox::Ok || status == GMessageBox::Yes)) {
 #ifdef Q_OS_UNIX
         if (sender()->property("Garma_autokill_parent").toBool()) {
-            ::kill(getppid(), 15);
+            ::kill(getppid(), 9);  // 使用 9 可以强制关闭进程
+            // 等效于 kill -9 xxx
         }
 #endif
         exit(1);
