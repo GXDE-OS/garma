@@ -207,6 +207,9 @@ Garma::Garma(int &argc, char **argv) : DApplication(argc, argv)
         } else if (arg == "--dzen") {
             m_type = Dzen;
             error = showDzen(args);
+        } else if (arg == "--about") {
+            m_type = About;
+            error = showAbout(args);
         }
         if (error != 1) {
             break;
@@ -733,10 +736,7 @@ char Garma::showMessage(const QStringList &args, char type)
     dlg->setIcon(type == 'w' ? GMessageBox::Warning :
                (type == 'q' ? GMessageBox::Question :
                (type == 'e' ? GMessageBox::Critical : GMessageBox::Information)));
-    /*if (dlg->iconPixmap().isNull())
-        dlg->setIcon(type == 'w' ? GMessageBox::Warning :
-                   (type == 'q' ? GMessageBox::Question :
-                   (type == 'e' ? GMessageBox::Critical : GMessageBox::Information)));*/
+
     SHOW_DIALOG
     return 0;
 }
@@ -1293,6 +1293,43 @@ char Garma::showScale(const QStringList &args)
         } else if (args.at(i) == "--hide-value") {
             val->hide();
         } else { WARN_UNKNOWN_ARG("--scale") }
+    }
+    SHOW_DIALOG
+    return 0;
+}
+
+char Garma::showAbout(const QStringList &args)
+{
+    DAboutDialog *dlg = new DAboutDialog;
+    for (int i = 0; i < args.count(); ++i) {
+        QString option = args.at(i);
+        if (option == "--description") {
+            dlg->setDescription(NEXT_ARG);
+        }
+        else if (option == "--version") {
+            dlg->setVersion(NEXT_ARG);
+        }
+        else if (option == "--acknowledgementLink") {
+            dlg->setAcknowledgementLink(NEXT_ARG);
+        }
+        else if (option == "--license") {
+            dlg->setLicense(NEXT_ARG);
+        }
+        else if (option == "--websiteLink") {
+            dlg->setWebsiteLink(NEXT_ARG);
+        }
+        else if (option == "--icon") {
+            dlg->setProductIcon(QIcon(NEXT_ARG));
+        }
+        else if (option == "--websiteName") {
+            dlg->setWebsiteName(NEXT_ARG);
+        }
+        else if (option == "--title") {
+            dlg->setTitle(NEXT_ARG);
+        }
+        else {
+            qDebug() << "unspecific argument" << args.at(i);
+        }
     }
     SHOW_DIALOG
     return 0;

@@ -26,6 +26,7 @@ class QTreeWidgetItem;
 #include <dapplication.h>
 #include <QPair>
 #include "ddialog.h"
+#include "daboutdialog.h"
 
 DWIDGET_USE_NAMESPACE
 
@@ -35,7 +36,7 @@ class Garma : public DApplication
 public:
     Garma(int &argc, char **argv);
     enum Type { Invalid, Calendar, Entry, Error, Info, FileSelection, List, Notification, Progress, Question, Warning,
-                Scale, TextInfo, ColorSelection, FontSelection, Password, Forms, Dzen };
+                Scale, TextInfo, ColorSelection, FontSelection, Password, Forms, Dzen, About };
     static void printHelp(const QString &category = QString());
     using  QApplication::notify;
 private:
@@ -50,6 +51,7 @@ private:
     char showNotification(const QStringList &args);
     char showProgress(const QStringList &args);
     char showScale(const QStringList &args);
+    char showAbout(const QStringList &args);
     char showText(const QStringList &args);
     char showColorSelection(const QStringList &args);
     char showFontSelection(const QStringList &args);
