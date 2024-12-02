@@ -7,10 +7,10 @@
 #include <QVBoxLayout>
 #include <QGridLayout>
 #include <QKeyEvent>
-#include "dabstractdialog.h"
 #include "dwaterprogress.h"
 #include "ddialog.h"
 #include <QDebug>
+#include <dprogressbar.h>
 DWIDGET_BEGIN_NAMESPACE
 
 class GProgressDialog: public DDialog

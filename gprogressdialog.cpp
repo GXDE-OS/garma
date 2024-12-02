@@ -9,7 +9,7 @@ GProgressDialog::GProgressDialog(QWidget *parent)
     m_progressbar = new DWaterProgress;
     m_tipsText = new QLabel();
     m_cancelButton = new QPushButton(tr("Cancel"));
-
+    m_progressbar->setFixedSize(60,60);
     // 开启动画
     m_progressbar->start();
 
