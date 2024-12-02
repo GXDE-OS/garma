@@ -15,7 +15,7 @@ GProgressDialog::GProgressDialog(QWidget *parent)
 
     m_layout = new QGridLayout();
     m_layout->addWidget(m_progressbar, 0, 0);
-    m_layout->addWidget(m_tipsText, 0, 1);
+    m_layout->addWidget(m_tipsText, 1, 0);
 
     m_dialogWidget = new QWidget();
     m_dialogWidget->setLayout(m_layout);
@@ -58,6 +58,10 @@ void GProgressDialog::setValue(int value)
     m_value = value;
     m_progressbar->setTextVisible(true);
     m_progressbar->setValue((m_value - m_minimum) * 100 / (m_maximum - m_minimum));
+    // 如果设置自动关闭则在等于最大值时自动关闭对话框
+    if (m_maximum == m_value || property("Garma_autoclose").toBool()) {
+        done(QDialog::Accepted);
+    }
 }
 
 int GProgressDialog::value()
