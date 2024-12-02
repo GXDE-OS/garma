@@ -14,7 +14,11 @@ DWIDGET_USE_NAMESPACE
 
 #define NEXT_ARG QString((++i < args.count()) ? args.at(i) : QString())
 #define WARN_UNKNOWN_ARG(_KNOWN_) if (args.at(i).startsWith("--") && args.at(i) != _KNOWN_) qDebug() << "unspecific argument" << args.at(i);
-#define SHOW_DIALOG m_dialog = dlg; connect(dlg, SIGNAL(finished(int)), SLOT(dialogFinished(int))); dlg->show();
+#define SHOW_DIALOG m_dialog = dlg; \
+    connect(dlg, SIGNAL(finished(int)), SLOT(dialogFinished(int))); \
+    dlg->setWindowFlags(dlg->windowFlags() & ~Qt::SubWindow); \
+    dlg->show();
+
 #define READ_INT(_V_, _TYPE_, _ERROR_) bool ok; const int _V_ = NEXT_ARG.to##_TYPE_(&ok); if (!ok) return !error(_ERROR_)
 
 #define NEW_DIALOG DDialog *dlg = new DDialog; \
