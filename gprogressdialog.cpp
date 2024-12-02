@@ -15,7 +15,7 @@ GProgressDialog::GProgressDialog(QWidget *parent)
 
     m_layout = new QGridLayout();
     m_layout->addWidget(m_progressbar, 0, 0);
-    m_layout->addWidget(m_tipsText, 1, 0);
+    m_layout->addWidget(m_tipsText, 0, 1);
 
     m_dialogWidget = new QWidget();
     m_dialogWidget->setLayout(m_layout);
