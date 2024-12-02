@@ -58,8 +58,9 @@ void GProgressDialog::setValue(int value)
     m_value = value;
     m_progressbar->setTextVisible(true);
     m_progressbar->setValue((m_value - m_minimum) * 100 / (m_maximum - m_minimum));
+
     // 如果设置自动关闭则在等于最大值时自动关闭对话框
-    if (m_maximum == m_value || property("Garma_autoclose").toBool()) {
+    if (m_maximum == m_value && property("Garma_autoclose").toBool()) {
         done(QDialog::Accepted);
     }
 }

@@ -1019,11 +1019,12 @@ void Garma::finishProgress()
     if (dlg->property("Garma_autoclose").toBool())
         QTimer::singleShot(250, this, SLOT(quit()));
     else {
-        dlg->setRange(0, 101);
+        dlg->setRange(0, 100);
         dlg->setValue(100);
         disconnect (dlg, SIGNAL(canceled()), dlg, SLOT(reject()));
         connect (dlg, SIGNAL(canceled()), dlg, SLOT(accept()));
         dlg->setCancelButtonText(m_ok.isNull() ? tr("Ok") : m_ok);
+        dlg->setCloseButtonVisiable(true);  // 重新显示启用按钮
         if (QPushButton *btn = dlg->findChild<QPushButton*>())
             btn->show();
     }
@@ -1031,8 +1032,9 @@ void Garma::finishProgress()
 
 void Garma::readStdIn()
 {
-    if (!gs_stdin->isOpen())
+    if (!gs_stdin->isOpen()) {
         return;
+    }
     QSocketNotifier *notifier = qobject_cast<QSocketNotifier*>(sender());
     if (notifier)
         notifier->setEnabled(false);
@@ -1186,6 +1188,13 @@ void Garma::readStdIn()
     QCoreApplication::processEvents();
 }
 
+void Garma::exitStdIn()
+{
+    if (m_type == Progress) {
+        finishProgress();
+    }
+}
+
 void Garma::listenToStdIn()
 {
     if (gs_stdin)
@@ -1193,6 +1202,7 @@ void Garma::listenToStdIn()
     gs_stdin = new QFile;
     if (gs_stdin->open(stdin, QIODevice::ReadOnly)) {
         QSocketNotifier *snr = new QSocketNotifier(gs_stdin->handle(), QSocketNotifier::Read, gs_stdin);
+        connect (snr, &QSocketNotifier::destroyed, this, &Garma::exitStdIn);  // 用于监听程序是否退出
         connect (snr, SIGNAL(activated(int)), SLOT(readStdIn()));
     } else {
         delete gs_stdin;

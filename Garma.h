@@ -58,6 +58,7 @@ private:
     bool readGeneral(QStringList &args);
     bool error(const QString message);
     void listenToStdIn();
+    void exitStdIn();
     void notify(const QString message, bool noClose = false);
 
     QString labelText(const QString &s) const; // m_zenity requires \n and \t interpretation in html.
