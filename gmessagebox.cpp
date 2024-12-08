@@ -27,11 +27,11 @@ void GMessageBox::setIcon(Icon icon)
 {
     enum QStyle::StandardPixmap dialogIcon;
     nowIcon = icon;
+
     switch(icon)
     {
     case Icon::NoIcon:
         return;
-        break;
     case Icon::Critical:
         dialogIcon = (enum QStyle::StandardPixmap)11;
         break;
@@ -45,8 +45,16 @@ void GMessageBox::setIcon(Icon icon)
         dialogIcon = (enum QStyle::StandardPixmap)10;
         break;
     }
-    this->setIconPixmap(DApplication::style()->standardIcon(dialogIcon).pixmap(64, 64));
+
+    // 获取设备像素比 (适配高分屏)
+    qreal scaleFactor = this->devicePixelRatioF();
+    int iconSize = static_cast<int>(64 * scaleFactor); // 基准大小为64px，根据比例调整
+
+    QPixmap pixmap = DApplication::style()->standardIcon(dialogIcon).pixmap(iconSize, iconSize);
+    pixmap.setDevicePixelRatio(scaleFactor); // 设置像素比以确保显示清晰
+    this->setIconPixmap(pixmap);
 }
+
 
 void GMessageBox::setStandardButtonsWithList(QList<StandardButtons> buttons)
 {
