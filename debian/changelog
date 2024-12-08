@@ -1,3 +1,7 @@
+garma (1.2.2) UNRELEASED; urgency=medium
+  * 修复 Garma 图标在高分屏模糊
+
+ -- gfdgd_xi <3025613752@qq.com>  Sat, 23 Nov 2024 20:33:15 +0800
 garma (1.2.1-2) UNRELEASED; urgency=medium
 
   * 修复问题 https://gitee.com/GXDE-OS/GXDE/issues/IAU9XH
