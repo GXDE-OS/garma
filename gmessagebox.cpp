@@ -53,6 +53,7 @@ void GMessageBox::setIcon(Icon icon)
     QPixmap pixmap = DApplication::style()->standardIcon(dialogIcon).pixmap(iconSize, iconSize);
     pixmap.setDevicePixelRatio(scaleFactor); // 设置像素比以确保显示清晰
     this->setIconPixmap(pixmap);
+    this->setWindowIcon(DApplication::style()->standardIcon(dialogIcon));
 }
 
 

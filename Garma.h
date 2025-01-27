@@ -83,6 +83,8 @@ private:
 
     int m_listPrintColumn = -1;
     bool m_listCheckable = false;
+
+    void setDialogIconWithStandard(int index, QDialog *dialog);
 };
 
 #endif //Garma_H

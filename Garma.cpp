@@ -327,6 +327,12 @@ Garma::Garma(int &argc, char **argv) : DApplication(argc, argv)
     }
 }
 
+void Garma::setDialogIconWithStandard(int index, QDialog *dialog)
+{
+    auto icon = (enum QStyle::StandardPixmap)index;
+    dialog->setWindowIcon(DApplication::style()->standardIcon(icon));
+}
+
 bool Garma::error(const QString message)
 {
     printf("Error: %s", qPrintable(message));
@@ -628,6 +634,7 @@ char Garma::showCalendar(const QStringList &args)
 char Garma::showEntry(const QStringList &args)
 {
     DInputDialog *dlg = new DInputDialog;
+    setDialogIconWithStandard(9, dlg);
     for (int i = 0; i < args.count(); ++i) {
         if (args.at(i) == "--text")
             qDebug() << "a";
@@ -658,6 +665,7 @@ char Garma::showEntry(const QStringList &args)
 char Garma::showPassword(const QStringList &args)
 {
     NEW_DIALOG
+    setDialogIconWithStandard(58, dlg);
 
     QLineEdit *username(NULL), *password(NULL);
     QString prompt = tr("Enter password");
@@ -744,6 +752,7 @@ char Garma::showMessage(const QStringList &args, char type)
 char Garma::showFileSelection(const QStringList &args)
 {
     DFileDialog *dlg = new DFileDialog;
+    setDialogIconWithStandard(21, dlg);
     QSettings settings("Garma");
     dlg->setViewMode(settings.value("FileDetails", false).toBool() ? DFileDialog::Detail : DFileDialog::List);
     dlg->setFileMode(DFileDialog::ExistingFile);
@@ -848,6 +857,8 @@ static void addItems(QTreeWidget *tw, QStringList &values, bool editable, bool c
 char Garma::showList(const QStringList &args)
 {
     NEW_DIALOG
+
+    setDialogIconWithStandard(33, dlg);
 
     QLabel *lbl;
     vl->addWidget(lbl = new QLabel(dlg));
@@ -1255,6 +1266,8 @@ char Garma::showScale(const QStringList &args)
 {
     NEW_DIALOG
 
+    setDialogIconWithStandard(9, dlg);
+
     QHBoxLayout *hl = new QHBoxLayout;
     QLabel *lbl, *val;
     QSlider *sld;
@@ -1301,6 +1314,7 @@ char Garma::showScale(const QStringList &args)
 char Garma::showAbout(const QStringList &args)
 {
     DAboutDialog *dlg = new DAboutDialog;
+    setDialogIconWithStandard(9, dlg);
     for (int i = 0; i < args.count(); ++i) {
         QString option = args.at(i);
         if (option == "--description") {
@@ -1338,6 +1352,7 @@ char Garma::showAbout(const QStringList &args)
 char Garma::showText(const QStringList &args)
 {
     NEW_DIALOG
+    setDialogIconWithStandard(9, dlg);
 
     QTextBrowser *te;
     vl->addWidget(te = new QTextBrowser(dlg));
@@ -1548,6 +1563,7 @@ static void buildList(QTreeWidget **tree, QStringList &values, QStringList &colu
 char Garma::showForms(const QStringList &args)
 {
     NEW_DIALOG
+    setDialogIconWithStandard(9, dlg);
     dlg->setProperty("Garma_separator", "|");
 
     QLabel *label;
