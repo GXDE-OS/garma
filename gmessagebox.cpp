@@ -126,6 +126,7 @@ void GMessageBox::setStandardButtonsWithList(QList<StandardButtons> buttons)
 
 void GMessageBox::setText(const QString &text)
 {
+    this->setWindowTitle(text);
     QLabel *label = findChild<QLabel*>("MessageLabel");
     if (label) {
         qDebug() << "Find Label";

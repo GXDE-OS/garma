@@ -1,5 +1,7 @@
 #include "gprogressdialog.h"
 #include "dimagebutton.h"
+#include "dapplication.h"
+#include <QStyle>
 
 DWIDGET_USE_NAMESPACE
 
@@ -21,11 +23,47 @@ GProgressDialog::GProgressDialog(QWidget *parent)
     m_dialogWidget->setLayout(m_layout);
     this->addContent(m_dialogWidget);
 
+    m_closeButton = this->findChild<DImageButton *>("CloseButton");
+
+    // 最小化按钮
+    m_miniButton = new DImageButton(this);
+    m_miniButton ->setObjectName("MiniButton");
+    m_miniButton ->adjustSize();
+    m_miniButton->setStyleSheet("qproperty-normalPic: url(:/images/spinner_decrease_normal.png);"
+                                "qproperty-hoverPic: url(:/images/spinner_decrease_hover.png);");
+    //m_miniButton ->setFixedSize(DIALOG::CLOSE_BUTTON_WIDTH, DIALOG::CLOSE_BUTTON_HEIGHT);
+    m_miniButton ->setAttribute(Qt::WA_NoMousePropagation);
+    connect(m_miniButton, &DImageButton::clicked, this, &GProgressDialog::showMinimized);
+
     addButton(tr("Cancel"), true, ButtonType::ButtonWarning);
 
     installEventFilter(this);
 
     setFocusPolicy(Qt::StrongFocus);
+
+    auto dialogIcon = (enum QStyle::StandardPixmap)9;
+    this->setWindowIcon(DApplication::style()->standardIcon(dialogIcon));
+
+    resizeMiniButton();
+}
+
+void GProgressDialog::resizeMiniButton()
+{
+    // 重新最小化按钮大小
+    if (!m_closeButton || !m_miniButton) {
+        return;
+    }
+    m_miniButton->setGeometry(m_closeButton->x() - m_closeButton->width() - m_closeButton->width() / 5,
+                              m_closeButton->y(),
+                              m_closeButton->width(),
+                              m_closeButton->height());
+}
+
+void GProgressDialog::resizeEvent(QResizeEvent *event)
+{
+    DDialog::resizeEvent(event);
+    // 重新计算最小化按钮大小
+    resizeMiniButton();
 }
 
 void GProgressDialog::reject()
@@ -45,6 +83,7 @@ void GProgressDialog::setLabelText(QString text)
 {
     // 设置文本居中
     m_tipsText->setText("    " + text.replace("\\n", "\n"));
+    this->setWindowTitle(text);
 }
 
 void GProgressDialog::setValue(int value)

@@ -36,3 +36,6 @@ translations.files = translations/*.qm
 target.path = $$PREFIX/bin
 
 INSTALLS += target translations
+
+RESOURCES += \
+    images.qrc

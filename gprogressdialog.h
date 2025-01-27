@@ -11,6 +11,8 @@
 #include "ddialog.h"
 #include <QDebug>
 #include <dprogressbar.h>
+#include "dimagebutton.h"
+
 DWIDGET_BEGIN_NAMESPACE
 
 class GProgressDialog: public DDialog
@@ -34,6 +36,9 @@ private:
     QPushButton *m_cancelButton;
     QGridLayout *m_layout;
     QWidget *m_dialogWidget;
+    DImageButton *m_miniButton;
+    DImageButton *m_closeButton;
+
     // 需要自行实现范围的计算
     int m_maximum = 100;
     int m_minimum = 0;
@@ -42,7 +47,10 @@ private:
 
     bool m_isEnabledCloseButton = true;
 
-    void reject();
+    void reject() override;
+
+    void resizeEvent(QResizeEvent *event) Q_DECL_OVERRIDE;
+    void resizeMiniButton();
 };
 
 DWIDGET_END_NAMESPACE

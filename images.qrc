@@ -1,0 +1,6 @@
+<RCC>
+    <qresource prefix="/">
+        <file>images/spinner_decrease_hover.png</file>
+        <file>images/spinner_decrease_normal.png</file>
+    </qresource>
+</RCC>
