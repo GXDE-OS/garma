@@ -22,7 +22,6 @@ int main (int argc, char **argv)
         return 0;
     }
 
-    DApplication::loadDXcbPlugin();
     Garma d(argc, argv);
 
     return d.exec();

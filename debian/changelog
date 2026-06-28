@@ -1,8 +1,10 @@
-garma (1.2.3) UNRELEASED; urgency=medium
+garma (2.0.0) UNRELEASED; urgency=medium
+
   * 修复 Garma 图标在高分屏模糊
   * 进度窗口支持最小化
+  * Qt6 迁移
 
- -- gfdgd_xi <3025613752@qq.com>  Mon, 27 Jan 2025 15:31:31 +0800
+ -- gfdgd_xi <3025613752@qq.com>  Sun, 28 Jun 2026 22:47:46 +0800
 
 garma (1.2.1-2) UNRELEASED; urgency=medium
 

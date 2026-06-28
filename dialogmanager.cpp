@@ -1,6 +1,5 @@
 #include "dialogmanager.h"
 #include <QApplication>
-#include <QDesktopWidget>
 #include <QScreen>
 
 DialogManager::DialogManager()
