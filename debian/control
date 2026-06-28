@@ -9,7 +9,8 @@ Build-Depends:
  libdtk6core-dev,
  libdtk2widget6-dev,
  qt6-base-dev,
- qt6-tools-dev-tools
+ qt6-tools-dev-tools,
+ pkg-config
 Standards-Version: 4.6.2
 Homepage: https://gitee.com/GXDE-OS/garma
 
