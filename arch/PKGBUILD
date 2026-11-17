@@ -1,15 +1,16 @@
 # Maintainer: CharOfString <root@charofstring.cc>
-pkgname=garma-git
+pkgname=garma
 pkgver=2.0.0
 pkgrel=1
 pkgdesc='Zenity-compatible dialog tool for GXDE, based on Qt6 and DTK2 (Qt6 port)'
 arch=('x86_64' 'aarch64')
 url="https://github.com/GXDE-OS/garma"
 license=('GPL-2.0-only')
-depends=('dtk2widget-qt6-git' 'gxde-qt6integration-git' 'qt6-base' 'libgcc' 'libstdc++' 'glibc')
+depends=('dtk2widget-qt6' 'gxde-qt6integration' 'qt6-base' 'libgcc' 'libstdc++' 'glibc')
 makedepends=('git' 'cmake' 'ninja' 'qt6-tools')
-provides=('garma')
-conflicts=('garma')
+provides=("garma-git=$pkgver")
+conflicts=('garma-git')
+replaces=('garma-git')
 source=()
 sha512sums=()
 
